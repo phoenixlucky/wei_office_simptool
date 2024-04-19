@@ -198,8 +198,8 @@ class MySQLDatabase:
         finally:
             cursor.close()
 
-    def fetch_query(self, query, params=None):
-        cursor = self.connection.cursor()
+    def fetch_query(self, query, params=None,dictionary=False):
+        cursor = self.connection.cursor(dictionary)
         try:
             if params:
                 cursor.execute(query, params)
