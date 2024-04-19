@@ -1,0 +1,6 @@
+pathlib
+pandas
+pymysql
+datetime
+openpyxl
+toml
