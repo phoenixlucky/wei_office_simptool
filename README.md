@@ -29,9 +29,11 @@ print(result)
 from wei_office_simptool import OpenExcel,ExcelHandler
 
 # 示例代码
-myExcel = OpenExcel(file_name='your_excel_file.xlsx')
-with myExcel:
-  myExcel.excel_write(result,sheet_name='Sheet1', results=data, start_row=1, start_col=1, end_row=3, end_col=2)
+     home_file = pathlib.Path.cwd()
+     openfile = pathlib.Path(home_file) / "1.xlsx"
+     savefile = pathlib.Path(home_file) / "2.xlsx"
+     with OpenExcel(openfile, savefile).my_open() as ws:
+         eExcel.fast_write(ws, results, sr, sc, er=0, ec=0, re=0)
 ```
 ## 3. eSend 类
 用于发送邮件。
