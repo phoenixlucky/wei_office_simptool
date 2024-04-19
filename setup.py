@@ -36,12 +36,12 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name='wei_office_simptool',
     version='0.0.4',
-    author="Ethan Wilkins",  # 作者
-    author_email="thisluckyboy@126.com",  # 作者联系方式，可写自己的邮箱地址
+    author="Ethan Wilkins",
+    author_email="thisluckyboy@126.com",
     description="一个用于简化办公工作的工具库，提供了数据库操作、Excel 处理、邮件发送、日期时间戳的格式转换等常见功能,实现1到3行代码完成相关处理的快捷操作。",  # 包的简述
-    long_description=long_description,  # 包的详细介绍，一般在README.md文件内
+    long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/phoenixlucky/wei_office_simptool",  # 自己项目地址，比如github的项目地址
+    url="https://github.com/phoenixlucky/wei_office_simptool",
     packages=find_packages(),
     install_requires=[
         'pathlib',
@@ -50,6 +50,7 @@ setup(
         'datetime',
         'openpyxl',
         'toml',
+        'mysql-connector-python',
         # Include other dependencies
     ],
     classifiers=[
@@ -57,5 +58,5 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6',  # 对python的最低版本要求
+    python_requires='>=3.6',
 )
