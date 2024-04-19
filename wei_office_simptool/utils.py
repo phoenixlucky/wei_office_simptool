@@ -37,6 +37,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from functools import wraps
 
+import mysql.connector
 import openpyxl
 import pandas as pd
 import pymysql
@@ -164,6 +165,52 @@ class Database:
                 self.writesqlmany(sql, purchases)
         else:
             return self.to_df(sql)
+
+class MySQLDatabase:
+    def __init__(self, config):
+        self.config = config
+        self.connection = None
+        self.connect()
+
+    def connect(self):
+        try:
+            self.connection = mysql.connector.connect(**self.config)
+            print("Connected to MySQL database")
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+
+    def close(self):
+        if self.connection:
+            self.connection.close()
+            print("MySQL connection closed")
+
+    def execute_query(self, query, params=None):
+        cursor = self.connection.cursor()
+        try:
+            if params:
+                cursor.execute(query, params)
+            else:
+                cursor.execute(query)
+            self.connection.commit()
+            print("Query executed successfully")
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+        finally:
+            cursor.close()
+
+    def fetch_query(self, query, params=None):
+        cursor = self.connection.cursor()
+        try:
+            if params:
+                cursor.execute(query, params)
+            else:
+                cursor.execute(query)
+            result = cursor.fetchall()
+            return result
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+        finally:
+            cursor.close()
 
 class ExcelHandler:
     def __init__(self, file_name):

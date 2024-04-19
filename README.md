@@ -22,6 +22,44 @@ db = Database(host='your_host', port=3306, user='your_user', password='your_pass
 result = db("SELECT * FROM your_table", operation_mode="s")
 print(result)
 ```
+## 1.1. MySQLDatabase 类
+from wei_office_simptool import MySQLDatabase
+
+#### MySQL 连接配置
+    mysql_config = {
+        'host': 'your_host',
+        'user': 'your_user',
+        'password': 'your_password',
+        'database': 'your_database'
+    }
+
+#### 创建 MySQLDatabase 对象
+    db = MySQLDatabase(mysql_config)
+
+#### 插入数据
+    insert_query = "INSERT INTO your_table (column1, column2) VALUES (%s, %s)"
+    insert_params = ("value1", "value2")
+    db.execute_query(insert_query, insert_params)
+
+#### 查询数据
+    select_query = "SELECT * FROM your_table"
+    results = db.fetch_query(select_query)
+    for row in results:
+        print(row)
+
+#### 更新数据
+    update_query = "UPDATE your_table SET column1 = %s WHERE column2 = %s"
+    update_params = ("new_value", "value2")
+    db.execute_query(update_query, update_params)
+
+#### 删除数据
+    delete_query = "DELETE FROM your_table WHERE column1 = %s"
+    delete_params = ("new_value",)
+    db.execute_query(delete_query, delete_params)
+
+# 关闭连接
+    db.close()
+
 ## 2. ExcelHandler 类
 用于处理 Excel 文件，包括写入和读取。
 
@@ -46,7 +84,7 @@ email_sender = eSend(sender,receiver,username,password,smtpserver='smtp.126.com'
 email_sender.send_email(subject='Your Subject', e_content='Your Email Content', file_paths=['/path/to/file/'], file_names=['attachment.txt'])
 ```
 
-## 4
+## 4 eConstant 类
 用于获取最近的时间处理。
 
 ```bash
