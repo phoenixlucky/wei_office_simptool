@@ -41,7 +41,7 @@ setup(
     description="一个用于简化办公工作的工具库，提供了数据库操作、Excel 处理、邮件发送、日期时间戳的格式转换等常见功能,实现1到3行代码完成相关处理的快捷操作。",  # 包的简述
     long_description=long_description,  # 包的详细介绍，一般在README.md文件内
     long_description_content_type="text/markdown",
-    url="https://github.com/phoenixlucky/test",  # 自己项目地址，比如github的项目地址
+    url="https://github.com/phoenixlucky/wei_office_simptool",  # 自己项目地址，比如github的项目地址
     packages=find_packages(),
     install_requires=[
         'pathlib',
