@@ -37,7 +37,7 @@ from .utils import *
 __all__ = ['utils']
 
 # 执行初始化代码
-print("Initializing package...")
+# print("Initializing package...")
 
 # 定义包级别的变量和函数
 #package_variable = 123
