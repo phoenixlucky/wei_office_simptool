@@ -199,7 +199,7 @@ class MySQLDatabase:
             cursor.close()
 
     def fetch_query(self, query, params=None,dictionary=False):
-        cursor = self.connection.cursor(dictionary)
+        cursor = self.connection.cursor(dictionary=dictionary)
         try:
             if params:
                 cursor.execute(query, params)
