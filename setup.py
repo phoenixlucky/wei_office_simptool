@@ -35,7 +35,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 setup(
     name='wei_office_simptool',
-    version='0.0.4',
+    version='0.0.5',
     author="Ethan Wilkins",
     author_email="thisluckyboy@126.com",
     description="一个用于简化办公工作的工具库，提供了数据库操作、Excel 处理、邮件发送、日期时间戳的格式转换等常见功能,实现1到3行代码完成相关处理的快捷操作。",  # 包的简述
