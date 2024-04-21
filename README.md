@@ -92,7 +92,9 @@ from wei_office_simptool import eConstant
 
 # 示例代码
 #timeclass:1日期 2时间戳 3时刻
-interval_time = eConstant(interval_day,timeclass).get_timeparameter()
+#获取当日的日期字符串
+x=eConstant(interval_day=0,timeclass=1).get_timeparameter(Format="%Y-%m-%d")
+print(x)
 ```
 
 ## 贡献
