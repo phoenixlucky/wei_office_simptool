@@ -1,6 +1,6 @@
 # wei_office_simptool
 
-`wei_office_simptool` 一个用于简化办公工作的工具库，提供了数据库操作、Excel 处理、邮件发送、日期时间戳的格式转换等常见功能,实现1到3行代码完成相关处理的快捷操作。
+`wei_office_simptool` 一个用于简化办公工作的工具库，提供了数据库操作、Excel 处理、邮件发送、日期时间戳的格式转换、文件移动等常见功能,实现1到3行代码完成相关处理的快捷操作。
 
 ## 安装
 
@@ -95,6 +95,17 @@ from wei_office_simptool import eConstant
 #获取当日的日期字符串
 x=eConstant(interval_day=0,timeclass=1).get_timeparameter(Format="%Y-%m-%d")
 print(x)
+```
+
+## 5 FileManagement 类
+用于文件移动并且重命名。
+```bash
+#latest_folder2 当前目录
+#destination_directory 目标目录
+#target_files2 文件名
+#add_prefix 重命名去除数字
+#file_type 文件类型
+copy_files(latest_folder2, destination_directory, target_files2, rename=add_prefix,file_type="xls")
 ```
 
 ## 贡献
