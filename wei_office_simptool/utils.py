@@ -339,24 +339,24 @@ class eSend(object):
             print(e)
             pass
 
-class eConstant(object):
-    def __init__(self, interval_day,timeclass=1):
+class DateFormat(object):
+    def __init__(self, interval_day,timeclass='date'):
         self.interval_day = interval_day
         self.timeclass=timeclass #1日期 2时间戳 3时刻
 
     def get_timeparameter(self,Format='%Y%m%d'):
-        if self.timeclass==1:
+        if self.timeclass=='date':
             '返回日期'
             realtime = (datetime.date.today() - datetime.timedelta(days=self.interval_day)).strftime(Format)
-        elif self.timeclass==2:
+        elif self.timeclass=='timestamp':
             '返回时间戳'
             realtime = time.localtime(time.time())
-        elif self.timeclass==3:
+        elif self.timeclass=='time':
             ':return time'
             if Format=='%Y%m%d':
                 Format = '%H%M'
             realtime = time.strftime(Format, time.localtime(time.time()))
-        elif self.timeclass==4:
+        elif self.timeclass=='datetime':
             realtime= datetime.datetime.fromtimestamp(int(time.time()))
         else:
             raise TypeError("你输入的参数不合理!")

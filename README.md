@@ -84,16 +84,16 @@ email_sender = eSend(sender,receiver,username,password,smtpserver='smtp.126.com'
 email_sender.send_email(subject='Your Subject', e_content='Your Email Content', file_paths=['/path/to/file/'], file_names=['attachment.txt'])
 ```
 
-## 4 eConstant 类
+## 4 DateFormat 类
 用于获取最近的时间处理。
 
 ```bash
-from wei_office_simptool import eConstant
+from wei_office_simptool import eDateFormat
 
 # 示例代码
-#timeclass:1日期 2时间戳 3时刻
+#timeclass:1日期 date 2时间戳 timestamp 3时刻 time 4datetime
 #获取当日的日期字符串
-x=eConstant(interval_day=0,timeclass=1).get_timeparameter(Format="%Y-%m-%d")
+x=eDateFormat(interval_day=0,timeclass='date').get_timeparameter(Format="%Y-%m-%d")
 print(x)
 ```
 
