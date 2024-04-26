@@ -178,10 +178,10 @@ class FileManagement:
         pattern = r'[\u4e00-\u9fa5]+'
         matches = re.findall(pattern, filename)[0]
         return f"{matches}.{file_type}"
-    def copy_files(self,src_dir, dest_dir, target_files, rename=None,file_type="xls"):
+    def copy_files(self,src_dir, dest_dir, target_files, rename=False,file_type="xls"):
         for target_file in target_files:
             source_path = os.path.join(src_dir, target_file)
-            destination_file = rename(target_file,file_type) if rename else target_file
+            destination_file = self.add_prefix(target_file,file_type) if rename else target_file
             destination_path = os.path.join(dest_dir, destination_file)
             if os.path.exists(source_path):
                 shutil.copy(source_path, destination_path)

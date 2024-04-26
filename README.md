@@ -108,7 +108,9 @@ print(x)
 #target_files2 文件名
 #add_prefix 重命名去除数字
 #file_type 文件类型
-copy_files(latest_folder2, destination_directory, target_files2, rename=add_prefix,file_type="xls")
+FileManagement().copy_files(latest_folder2, destination_directory, target_files2, rename=True,file_type="xls")
+#寻找最新文件夹
+latest_folder = FileManagement().find_latest_folder(base_directory)
 ```
 
 ## 贡献
