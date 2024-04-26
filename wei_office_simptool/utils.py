@@ -39,6 +39,7 @@ from email.header import Header
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from functools import wraps
+from pathlib import Path
 
 import mysql.connector
 import openpyxl
@@ -187,6 +188,13 @@ class FileManagement:
                 print(f"File {target_file} copied from {source_path} to {destination_path}")
             else:
                 print(f"Source file {target_file} not found in the latest folder.")
+
+    def find_latest_folder(self,base_dir):
+        folders = [f for f in Path(base_dir).iterdir() if f.is_dir()]
+        if not folders:
+            return None
+        latest_folder = max(folders, key=os.path.getctime)
+        return latest_folder
 
 class MySQLDatabase:
     def __init__(self, config):
@@ -361,6 +369,24 @@ class DateFormat(object):
         else:
             raise TypeError("你输入的参数不合理!")
         return realtime
+
+    def datetime_standar(self,df, colname):
+    #处理表格的列文本时间格式
+        if self.timeclass == 'date':
+            df[colname] = pd.to_datetime(df[colname]).dt.date
+        elif self.timeclass == 'time':
+            formats = ['%Y-%m-%d', '%H:%M:%S', '%Y-%m-%d %H:%M:%S']
+            for fmt in formats:
+                try:
+                    df[colname] = pd.to_datetime(df[colname], format=fmt)
+                    break
+                except ValueError:
+                    continue
+            else:
+                print(f"Column {colname} cannot be parsed with the provided formats.")
+        else:
+            print("Invalid type. Choose either 'date' or 'time'.")
+        return df
 
 
 class eExcel:

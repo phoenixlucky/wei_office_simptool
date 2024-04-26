@@ -88,13 +88,16 @@ email_sender.send_email(subject='Your Subject', e_content='Your Email Content', 
 用于获取最近的时间处理。
 
 ```bash
-from wei_office_simptool import eDateFormat
+from wei_office_simptool import DateFormat
 
 # 示例代码
 #timeclass:1日期 date 2时间戳 timestamp 3时刻 time 4datetime
 #获取当日的日期字符串
-x=eDateFormat(interval_day=0,timeclass='date').get_timeparameter(Format="%Y-%m-%d")
+x=DateFormat(interval_day=0,timeclass='date').get_timeparameter(Format="%Y-%m-%d")
 print(x)
+
+# 格式化df的表的列属性
+ df = DateFormat(interval_day=0,timeclass='date').datetime_standar(df, '日期')
 ```
 
 ## 5 FileManagement 类
