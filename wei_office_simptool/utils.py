@@ -27,6 +27,7 @@
 @email:thisluckyboy@126.com
 """
 import base64
+import contextlib
 import datetime
 import os
 import pathlib
@@ -40,7 +41,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from functools import wraps
 from pathlib import Path
-
+import xlwings as xw
 import mysql.connector
 import openpyxl
 import pandas as pd
@@ -440,3 +441,16 @@ class OpenExcel:
         xlBook = eExcel(file_name=self.openfile)
         yield xlBook.ws
         xlBook.excel_save_as(self.savefile)
+
+@contextlib.contextmanager
+def openfile():
+    try:
+        app = xw.App(visible=False)
+        wb = app.books.open(r'D:\基础文件夹\Desktop\佰政数据\佰政销售数据日报.xlsx')
+    except:
+        app.quit()
+    yield wb
+    try:
+        wb.save(fr'D:\基础文件夹\Desktop\佰政数据\佰政销售数据日报.xlsx')
+    finally:
+        app.quit()
