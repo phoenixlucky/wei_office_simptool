@@ -73,6 +73,18 @@ from wei_office_simptool import OpenExcel,ExcelHandler
      with OpenExcel(openfile, savefile).my_open() as ws:
          eExcel.fast_write(ws, results, sr, sc, er=0, ec=0, re=0)
 ```
+
+### 2.1 eExcel 类
+创建、写入表
+```bash
+from wei_office_simptool import eExcel
+eExcel(file_name=r"D:\Deskto\1.xlsx")
+#读取
+x=eExcel(file_name=r"D:\Deskto\1.xlsx").excel_read(start_row, start_col, end_row, end_col)
+#写入
+eExcel(file_name=r"D:\Deskto\1.xlsx").excel_write(ws="Sheet1",results, start_row, start_col, end_row, end_col)
+```
+
 ## 3. eSend 类
 用于发送邮件。
 

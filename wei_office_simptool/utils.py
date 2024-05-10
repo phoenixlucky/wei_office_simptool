@@ -390,7 +390,7 @@ class DateFormat(object):
 
 
 class eExcel:
-    def __init__(self, visible=1, file_name=None):
+    def __init__(self, file_name=None):
         self.file_name = file_name
         if not pathlib.Path(file_name).exists():
             self.create_new_excel(file_name)
@@ -400,6 +400,8 @@ class eExcel:
     @staticmethod
     def create_new_excel(file_name):
         wb = openpyxl.Workbook()
+        sheet = wb.active
+        sheet.title = 'sheet1'  # 设置工作表的名称为sheet1
         wb.save(file_name)
 
     @staticmethod
