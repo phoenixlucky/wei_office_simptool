@@ -28,18 +28,17 @@
 """
 # test_database.py
 import unittest
-
-from wei_office_simptool.utils import Database
+from functools import partial
+from wei_office_simptool.wei_office_simptool.utils import OpenExcel,eExcel
 
 
 class TestDatabase(unittest.TestCase):
     def test_connection(self):
         # 在这里编写你的测试代码
-        db = Database(host='localhost', port=3306, user='user', password='password', db='test_db')
-        db.connect()
-        self.assertTrue(db.connection_state == 1)
-        db.close()
-        self.assertTrue(db.connection_state == 0)
+        with OpenExcel(r"D:\基础文件夹\Desktop\日常SQL\1.xlsx",
+                               r"D:\基础文件夹\Desktop\日常SQL\1.xlsx").my_open() as wb:
+            fastwriteWithParameters = partial(wb.fast_write, wb=wb)
+            fastwriteWithParameters('sheet1', ((111,),), 18, 3)
 
     # 为其他功能添加更多测试用例
 

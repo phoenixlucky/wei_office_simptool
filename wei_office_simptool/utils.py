@@ -405,8 +405,8 @@ class eExcel:
         sheet.title = 'sheet1'  # 设置工作表的名称为sheet1
         wb.save(file_name)
 
-    @staticmethod
-    def excel_write(ws, results, start_row, start_col, end_row, end_col):
+    def excel_write(self,ws, results, start_row, start_col, end_row, end_col):
+        ws=self.wb[ws]
         for i, row in enumerate(range(start_row, end_row + 1)):
             for j, value in enumerate(range(start_col, end_col + 1)):
                 ws.cell(row=row, column=value, value=results[i][j])
@@ -421,14 +421,13 @@ class eExcel:
     def excel_save_as(self, file_name2):
         self.wb.save(file_name2)
 
-    @staticmethod
-    def fast_write(ws, results, sr, sc, er=0, ec=0, re=0):
+    def fast_write(self, ws, results, sr, sc, er=0, ec=0, re=0,wb=None):
         if re == 0:
             er = len(results) + sr - 1
             ec = len(results[0]) + sc - 1
         elif re == 1:
             pass
-        eExcel.excel_write(ws, results, start_row=sr, start_col=sc, end_row=er, end_col=ec)
+        wb.excel_write(ws, results, start_row=sr, start_col=sc, end_row=er, end_col=ec)
 
 class OpenExcel:
     def __init__(self, openfile, savefile):
@@ -438,19 +437,19 @@ class OpenExcel:
     @contextmanager
     def my_open(self):
         print(f"Opening Excel file: {self.openfile}")
-        xlBook = eExcel(file_name=self.openfile)
-        yield xlBook.ws
-        xlBook.excel_save_as(self.savefile)
+        wb = eExcel(file_name=self.openfile)
+        yield wb
+        wb.excel_save_as(self.savefile)
 
-@contextlib.contextmanager
-def openfile():
-    try:
-        app = xw.App(visible=False)
-        wb = app.books.open(r'D:\基础文件夹\Desktop\佰政数据\佰政销售数据日报.xlsx')
-    except:
-        app.quit()
-    yield wb
-    try:
-        wb.save(fr'D:\基础文件夹\Desktop\佰政数据\佰政销售数据日报.xlsx')
-    finally:
-        app.quit()
+    @contextmanager
+    def openfile(self):
+        try:
+            app = xw.App(visible=False)
+            wb = app.books.open(self.openfile)
+        except:
+            app.quit()
+        yield wb
+        try:
+            wb.save(self.savefile)
+        finally:
+            app.quit()
