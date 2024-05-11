@@ -390,7 +390,7 @@ class DateFormat(object):
         return df
 
 
-class eExcel:
+class eExcel():
     def __init__(self, file_name=None):
         self.file_name = file_name
         if not pathlib.Path(file_name).exists():
@@ -404,6 +404,9 @@ class eExcel:
         sheet = wb.active
         sheet.title = 'sheet1'  # 设置工作表的名称为sheet1
         wb.save(file_name)
+
+    def create_new_sheet(self,ws):
+        self.wb.create_sheet(ws)
 
     def excel_write(self,ws, results, start_row, start_col, end_row, end_col):
         ws=self.wb[ws]
