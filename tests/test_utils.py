@@ -39,6 +39,8 @@ class TestDatabase(unittest.TestCase):
                                r"D:\基础文件夹\Desktop\日常SQL\1.xlsx").my_open() as wb:
             fastwriteWithParameters = partial(wb.fast_write, wb=wb)
             fastwriteWithParameters('sheet1', ((111,),), 18, 3)
+            wb.create_new_sheet("sss1")
+            fastwriteWithParameters('sss1', ((111,),), 18, 3)
 
     # 为其他功能添加更多测试用例
 
