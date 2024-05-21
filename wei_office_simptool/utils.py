@@ -371,7 +371,20 @@ class DateFormat(object):
             raise TypeError("你输入的参数不合理!")
         return realtime
 
-    def datetime_standar(self,df, colname):
+    def datetime_standar(self,df, colname, type=""):
+        for index, row in df.iterrows():
+            date_value = row[colname]
+
+            # 检查日期值是否为None
+            if date_value:
+                # 在这里可以对非空日期值进行操作，比如转换日期格式等
+                df.at[index, colname] = pd.to_datetime(date_value, format='mixed')
+            else:
+                # 对空日期值进行处理，可以跳过或执行其他操作
+                pass
+        return df
+
+    def datetime_standar_lost(self,df, colname):
     #处理表格的列文本时间格式
         if self.timeclass == 'date':
             df[colname] = pd.to_datetime(df[colname]).dt.date
@@ -388,23 +401,6 @@ class DateFormat(object):
         else:
             print("Invalid type. Choose either 'date' or 'time'.")
         return df
-
-    def datetime_standar2(self,df, colname):
-        if self.timeclass == 'date':
-            df[colname] = pd.to_datetime(df[colname]).dt.date
-        elif self.timeclass == 'time':
-            for index, row in df.iterrows():
-                date_value = row[colname]
-
-                # 检查日期值是否为None
-                if date_value:
-                    # 在这里可以对非空日期值进行操作，比如转换日期格式等
-                    df.at[index, colname] = pd.to_datetime(date_value, format='mixed')
-                else:
-                    # 对空日期值进行处理，可以跳过或执行其他操作
-                    pass
-        return df
-
 
 class eExcel():
     def __init__(self, file_name=None):
