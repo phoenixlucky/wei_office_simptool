@@ -497,7 +497,7 @@ class OpenExcel:
         wb.excel_save_as(self.savefile)
 
     @contextmanager
-    def openfile(self):
+    def open_save_Excel(self):
         try:
             app = xw.App(visible=False)
             wb = app.books.open(self.openfile)
