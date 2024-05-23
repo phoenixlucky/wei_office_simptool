@@ -245,6 +245,26 @@ class FileManagement:
         os.makedirs(folder_name, exist_ok=True)
         print(f"文件夹 '{folder_name}' 创建成功")
 
+    def delete_folder_or_file(self,path):
+        """
+        删除指定的文件或文件夹。
+
+        :param path: 文件或文件夹的路径
+        """
+        try:
+            if os.path.isfile(path):
+                # 如果是文件，删除文件
+                os.remove(path)
+                print(f"文件 '{path}' 已删除。")
+            elif os.path.isdir(path):
+                # 如果是文件夹，删除文件夹及其内容
+                shutil.rmtree(path)
+                print(f"文件夹 '{path}' 及其内容已删除。")
+            else:
+                print(f"路径 '{path}' 不存在。")
+        except Exception as e:
+            print(f"删除 '{path}' 时出错: {e}")
+
 class MySQLDatabase:
     def __init__(self, config):
         self.config = config
