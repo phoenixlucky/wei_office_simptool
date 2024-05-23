@@ -237,6 +237,14 @@ class FileManagement:
         latest_folder = max(folders, key=os.path.getctime)
         return latest_folder
 
+    def copy_file_simple(self,source_path,destination_path):
+        shutil.copy(source_path, destination_path)
+
+    def create_new_folder(self,folder_name):
+        # 创建文件夹
+        os.makedirs(folder_name, exist_ok=True)
+        print(f"文件夹 '{folder_name}' 创建成功")
+
 class MySQLDatabase:
     def __init__(self, config):
         self.config = config
