@@ -125,6 +125,16 @@ FileManagement().copy_files(latest_folder2, destination_directory, target_files2
 latest_folder = FileManagement().find_latest_folder(base_directory)
 ```
 
+## 6 StringBaba 类
+用于清洗字符串。
+```bash
+str="""
+萝卜
+白菜
+"""
+formatted_str =StringBaba(str1).format_string_sql()
+```
+
 ## 贡献
 #### 有任何问题或建议，请提出 issue。欢迎贡献代码！
 
