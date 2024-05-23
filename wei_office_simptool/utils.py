@@ -536,3 +536,18 @@ class OpenExcel:
             wb.save(self.savefile)
         finally:
             app.quit()
+
+
+class StringBaba:
+    def __init__(self, input_string):
+        self.input_string = input_string
+
+    def format_string_sql(self):
+        input_lines = self.input_string.strip()
+        # 将输入字符串按换行符分割成列表
+        lines = input_lines.split('\n')
+        # 使用 join 函数将列表元素连接成一个字符串，并在元素之间加上 ","
+        formatted_output = '","'.join(lines)
+        # 给整个字符串加上双引号
+        formatted_output = f'"{formatted_output}"'
+        return formatted_output
