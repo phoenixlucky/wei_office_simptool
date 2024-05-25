@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: wei_office_simptool
-Version: 0.0.7
+Version: 0.0.13
 Summary: 一个用于简化办公工作的工具库，提供了数据库操作、Excel 处理、邮件发送、日期时间戳的格式转换、文件移动等常见功能,实现1到3行代码完成相关处理的快捷操作。
 Home-page: https://github.com/phoenixlucky/wei_office_simptool
 Author: Ethan Wilkins
@@ -93,6 +93,18 @@ from wei_office_simptool import OpenExcel,ExcelHandler
      with OpenExcel(openfile, savefile).my_open() as ws:
          eExcel.fast_write(ws, results, sr, sc, er=0, ec=0, re=0)
 ```
+
+### 2.1 eExcel 类
+创建、写入表
+```bash
+from wei_office_simptool import eExcel
+eExcel(file_name=r"D:\Deskto\1.xlsx")
+#读取
+x=eExcel(file_name=r"D:\Deskto\1.xlsx").excel_read(start_row, start_col, end_row, end_col)
+#写入
+eExcel(file_name=r"D:\Deskto\1.xlsx").excel_write(ws="Sheet1",results, start_row, start_col, end_row, end_col)
+```
+
 ## 3. eSend 类
 用于发送邮件。
 
@@ -108,13 +120,16 @@ email_sender.send_email(subject='Your Subject', e_content='Your Email Content', 
 用于获取最近的时间处理。
 
 ```bash
-from wei_office_simptool import eDateFormat
+from wei_office_simptool import DateFormat
 
 # 示例代码
 #timeclass:1日期 date 2时间戳 timestamp 3时刻 time 4datetime
 #获取当日的日期字符串
-x=eDateFormat(interval_day=0,timeclass='date').get_timeparameter(Format="%Y-%m-%d")
+x=DateFormat(interval_day=0,timeclass='date').get_timeparameter(Format="%Y-%m-%d")
 print(x)
+
+# 格式化df的表的列属性
+ df = DateFormat(interval_day=0,timeclass='date').datetime_standar(df, '日期')
 ```
 
 ## 5 FileManagement 类
@@ -125,7 +140,19 @@ print(x)
 #target_files2 文件名
 #add_prefix 重命名去除数字
 #file_type 文件类型
-copy_files(latest_folder2, destination_directory, target_files2, rename=add_prefix,file_type="xls")
+FileManagement().copy_files(latest_folder2, destination_directory, target_files2, rename=True,file_type="xls")
+#寻找最新文件夹
+latest_folder = FileManagement().find_latest_folder(base_directory)
+```
+
+## 6 StringBaba 类
+用于清洗字符串。
+```bash
+str="""
+萝卜
+白菜
+"""
+formatted_str =StringBaba(str1).format_string_sql()
 ```
 
 ## 贡献

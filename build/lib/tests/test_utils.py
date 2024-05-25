@@ -29,7 +29,7 @@
 # test_database.py
 import unittest
 
-from wei_office_simptool.utils import Database
+from wei_office_simptool.SQLManager import Database
 
 
 class TestDatabase(unittest.TestCase):

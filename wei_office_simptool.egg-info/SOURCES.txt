@@ -2,8 +2,14 @@ README.md
 setup.py
 tests/__init__.py
 tests/test_utils.py
+wei_office_simptool/SQLManager.py
 wei_office_simptool/__init__.py
-wei_office_simptool/utils.py
+wei_office_simptool/baseColor.py
+wei_office_simptool/chartsManager.py
+wei_office_simptool/docManager.py
+wei_office_simptool/mailManager.py
+wei_office_simptool/stringManager.py
+wei_office_simptool/timingTool.py
 wei_office_simptool.egg-info/PKG-INFO
 wei_office_simptool.egg-info/SOURCES.txt
 wei_office_simptool.egg-info/dependency_links.txt

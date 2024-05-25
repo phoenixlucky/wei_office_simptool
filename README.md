@@ -7,7 +7,7 @@
 使用以下命令安装 `wei_office_simptool`：
 
 ```bash
-pip install wei-office-simptool
+pip install wei_office_simptool
 ```
 
 ## 功能
@@ -15,7 +15,7 @@ pip install wei-office-simptool
 ## 1. Database 类
 用于连接和操作 MySQL 数据库。
 ```bash
-from wei-office-simptool import Database
+from wei_office_simptool import Database
 
 # 示例代码
 db = Database(host='your_host', port=3306, user='your_user', password='your_password', db='your_database')
@@ -64,7 +64,7 @@ from wei_office_simptool import MySQLDatabase
 用于处理 Excel 文件，包括写入和读取。
 
 ```bash
-from wei-office-simptool import OpenExcel,ExcelHandler
+from wei_office_simptool import OpenExcel,ExcelHandler
 
 # 示例代码
      home_file = pathlib.Path.cwd()
@@ -77,7 +77,7 @@ from wei-office-simptool import OpenExcel,ExcelHandler
 ### 2.1 eExcel 类
 创建、写入表
 ```bash
-from wei-office-simptool import eExcel
+from wei_office_simptool import eExcel
 eExcel(file_name=r"D:\Deskto\1.xlsx")
 #读取
 x=eExcel(file_name=r"D:\Deskto\1.xlsx").excel_read(start_row, start_col, end_row, end_col)
@@ -89,7 +89,7 @@ eExcel(file_name=r"D:\Deskto\1.xlsx").excel_write(ws="Sheet1",results, start_row
 用于发送邮件。
 
 ```bash
-from wei-office-simptool import eSend
+from wei_office_simptool import eSend
 
 # 示例代码
 email_sender = eSend(sender,receiver,username,password,smtpserver='smtp.126.com')
@@ -100,7 +100,7 @@ email_sender.send_email(subject='Your Subject', e_content='Your Email Content', 
 用于获取最近的时间处理。
 
 ```bash
-from wei-office-simptool import DateFormat
+from wei_office_simptool import DateFormat
 
 # 示例代码
 #timeclass:1日期 date 2时间戳 timestamp 3时刻 time 4datetime
