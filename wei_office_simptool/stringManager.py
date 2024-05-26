@@ -1,5 +1,5 @@
 import base64
-from datetime import datetime, time
+from datetime import date, time,datetime
 
 import pandas as pd
 
@@ -26,7 +26,7 @@ class DateFormat(object):
     def get_timeparameter(self,Format='%Y%m%d'):
         if self.timeclass=='date':
             '返回日期'
-            realtime = (datetime.date.today() - datetime.timedelta(days=self.interval_day)).strftime(Format)
+            realtime = (date.today() - datetime.timedelta(days=self.interval_day)).strftime(Format)
         elif self.timeclass=='timestamp':
             '返回时间戳'
             realtime = time.localtime(time.time())
