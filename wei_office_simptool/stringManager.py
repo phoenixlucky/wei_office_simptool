@@ -1,5 +1,6 @@
 import base64
-from datetime import date, time,datetime
+from datetime import date,datetime,timedelta
+import time
 
 import pandas as pd
 
@@ -26,7 +27,7 @@ class DateFormat(object):
     def get_timeparameter(self,Format='%Y%m%d'):
         if self.timeclass=='date':
             '返回日期'
-            realtime = (date.today() - datetime.timedelta(days=self.interval_day)).strftime(Format)
+            realtime = (datetime.today() - timedelta(days=self.interval_day)).strftime(Format)
         elif self.timeclass=='timestamp':
             '返回时间戳'
             realtime = time.localtime(time.time())
@@ -36,7 +37,7 @@ class DateFormat(object):
                 Format = '%H%M'
             realtime = time.strftime(Format, time.localtime(time.time()))
         elif self.timeclass=='datetime':
-            realtime= datetime.datetime.fromtimestamp(int(time.time()))
+            realtime= datetime.fromtimestamp(int(time.time()))
         else:
             raise TypeError("你输入的参数不合理!")
         return realtime
