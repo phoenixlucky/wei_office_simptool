@@ -134,6 +134,8 @@ class OpenExcel:
             app.quit()
         yield wb
         try:
+            # 刷新全部数据连接和查询
+            wb.api.RefreshAll()
             wb.save(self.savefile)
         finally:
             app.quit()
