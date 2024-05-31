@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: wei_office_simptool
-Version: 0.0.13
+Version: 0.0.16
 Summary: 一个用于简化办公工作的工具库，提供了数据库操作、Excel 处理、邮件发送、日期时间戳的格式转换、文件移动等常见功能,实现1到3行代码完成相关处理的快捷操作。
 Home-page: https://github.com/phoenixlucky/wei_office_simptool
 Author: Ethan Wilkins
