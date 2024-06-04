@@ -106,6 +106,6 @@ class MultipleTrendPredictor():
 
         # 创建预测结果数据框
         last_date = self.market_trend_df.index.max()+ pd.Timedelta(days=1)
-        future_dates = pd.date_range(start=last_date, freq=self.freq, periods=self.steps + 1)[1:]
+        future_dates = pd.date_range(start=last_date, freq=self.freq, periods=self.steps)
         predictions.index = future_dates
         return predictions
