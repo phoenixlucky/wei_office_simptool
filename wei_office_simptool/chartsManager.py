@@ -81,4 +81,31 @@ class TrendPredictor:
 # original_df = predictor.original_data()
 # future_forecast_df, forecast, str_forecast, future_dates = predictor.forecast_data()
 # future7_df, forecast, str_forecast, future_dates = predictor.styled_forecast_data()
+class MultipleTrendPredictor():
+    def __init__(self, market_trend_df, freq='B', order=(5, 1, 0), steps=7):
+        self.market_trend_df = market_trend_df.copy()
+        self.freq = freq
+        self.order = order
+        self.steps = steps
 
+    def predict(self):
+        # 按索引的时间顺序排序
+        self.market_trend_df = self.market_trend_df.sort_index(ascending=True)
+
+        # 预测函数
+        def predict_next_days(series, days):
+            model = ARIMA(series, order=self.order)
+            model_fit = model.fit()
+            forecast = model_fit.forecast(steps=days)
+            return forecast
+
+        # 预测
+        predictions = pd.DataFrame()
+        for column in self.market_trend_df.columns:
+            predictions[column] = predict_next_days(self.market_trend_df[column].reset_index(drop=True), self.steps)
+
+        # 创建预测结果数据框
+        last_date = self.market_trend_df.index.max()+ pd.Timedelta(days=1)
+        future_dates = pd.date_range(start=last_date, freq=self.freq, periods=self.steps + 1)[1:]
+        predictions.index = future_dates
+        return predictions
