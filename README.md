@@ -135,6 +135,34 @@ str="""
 formatted_str =StringBaba(str1).format_string_sql()
 ```
 
+## 7 TextAnalysis 类
+用于进行词频分析。
+```bash
+# 示例用法
+data = {
+    'Category': ['A', 'A', 'B', 'D', 'C'],
+    'Text': [
+        '我爱自然语言处理',
+        '自然语言处理很有趣',
+        '机器学习是一门很有前途的学科',
+        '我对机器学习很感兴趣',
+        '数据科学包含很多有趣的内容'
+    ]
+}
+
+df = pd.DataFrame(data)
+
+ta = TextAnalysis(df)
+result = ta.get_word_freq(group_col='Category', text_col='Text', agg_func=' '.join)
+
+word_freqs = result['word_freq'].tolist()
+titles = result['Category'].tolist()
+
+ta.plot_wordclouds(word_freqs, titles)
+```
+
+
+
 ## 贡献
 #### 有任何问题或建议，请提出 issue。欢迎贡献代码！
 

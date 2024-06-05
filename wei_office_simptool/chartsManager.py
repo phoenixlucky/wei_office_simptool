@@ -1,6 +1,11 @@
 import pandas as pd
 from statsmodels.tsa.arima.model import ARIMA
-
+from collections import Counter
+import jieba
+import numpy as np
+import pandas as pd
+from matplotlib import pyplot as plt
+from wordcloud import WordCloud
 
 class TrendPredictor:
     def __init__(self, market_trend_df, date_col, smoothed_avg_col,
@@ -109,3 +114,58 @@ class MultipleTrendPredictor():
         future_dates = pd.date_range(start=last_date, freq=self.freq, periods=self.steps)
         predictions.index = future_dates
         return predictions
+
+class TextAnalysis:
+    def __init__(self, dataframe):
+        self.df = dataframe
+
+    def get_word_freq(self, group_col, text_col, agg_func):
+        # 聚合数据
+        aggregated_text = self.df.groupby(group_col)[text_col].apply(agg_func).reset_index()
+        # 计算词频
+        aggregated_text['word_freq'] = aggregated_text[text_col].apply(self.compute_word_freq)
+        return aggregated_text
+
+    def compute_word_freq(self, text):
+        words = jieba.cut(text)
+        return Counter(words)
+
+    def plot_wordclouds(self, word_freqs, titles):
+        def create_ellipse_mask(width, height):
+            y, x = np.ogrid[-height // 2:height // 2, -width // 2:width // 2]
+            mask = (x ** 2 / (width // 2) ** 2 + y ** 2 / (height // 2) ** 2) <= 1
+            mask = 255 * mask.astype(int)
+            return mask
+
+        ellipse_mask = create_ellipse_mask(400, 200)
+        ellipse_mask = 255 - ellipse_mask  # 反转掩码
+
+        num_plots = len(word_freqs)
+        cols = 2
+        rows = (num_plots + 1) // cols
+
+        fig, axes = plt.subplots(rows, cols, figsize=(16, 8))
+
+        for i, (word_freq, title) in enumerate(zip(word_freqs, titles)):
+            ax = axes[i // cols, i % cols]
+            wordcloud = WordCloud(
+                width=400,
+                height=200,
+                max_words=200,
+                font_path='C:/Windows/Fonts/SimHei.ttf',
+                background_color='white',
+                mask=ellipse_mask
+            ).generate_from_frequencies(word_freq)
+
+            ax.imshow(wordcloud, interpolation='bilinear')
+            ax.set_title(title)
+            ax.axis('off')
+            ax.set_xticks([])  # 添加这行代码
+            ax.set_yticks([])  # 添加这行代码
+
+        for j in range(i + 1, rows * cols):
+            fig.delaxes(axes[j // cols, j % cols])
+
+        plt.axis('off')  # 添加这行代码
+        plt.tight_layout()
+        plt.show()
