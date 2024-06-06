@@ -5,3 +5,6 @@ datetime
 openpyxl
 toml
 mysql-connector-python
+statsmodels
+jieba
+wordcloud

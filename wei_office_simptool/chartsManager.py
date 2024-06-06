@@ -130,7 +130,7 @@ class TextAnalysis:
         words = jieba.cut(text)
         return Counter(words)
 
-    def plot_wordclouds(self, word_freqs, titles):
+    def plot_wordclouds(self, word_freqs, titles, save_path="wordclouds.png"):
         def create_ellipse_mask(width, height):
             y, x = np.ogrid[-height // 2:height // 2, -width // 2:width // 2]
             mask = (x ** 2 / (width // 2) ** 2 + y ** 2 / (height // 2) ** 2) <= 1
@@ -168,4 +168,11 @@ class TextAnalysis:
 
         plt.axis('off')  # 添加这行代码
         plt.tight_layout()
-        plt.show()
+        plt.savefig(save_path, bbox_inches='tight')  # 保存图像
+        plt.close()  # 关闭图像以释放内存
+
+# 使用示例
+# dataframe = ...  # 假设你已经有了一个 pandas DataFrame
+# text_analysis = TextAnalysis(dataframe)
+# word_freqs, titles = ...  # 假设你已经准备好了词频和标题
+# text_analysis.plot_wordclouds(word_freqs, titles, save_path="wordclouds.png")
