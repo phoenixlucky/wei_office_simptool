@@ -38,9 +38,11 @@ from .docManager import *
 from .mailManager import *
 from .stringManager import *
 from .chartsManager import *
+from .textManager import *
 
 # 定义__all__变量
-__all__ = ['SQLManager', 'baseColor', 'timingTool', 'docManager', 'mailManager', 'stringManager','chartsManager']
+__all__ = ['SQLManager', 'baseColor', 'timingTool', 'docManager', 'mailManager', 'stringManager','chartsManager',
+           'textManager.py']
 
 #执行初始化代码
 print("...WEI神启动...")
