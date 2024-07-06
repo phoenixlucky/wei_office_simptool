@@ -103,4 +103,7 @@ class textCombing:
                     output_text += line + '\n'
                     # 最后的空行
                 output_text = output_text.strip('\n')
+            else:
+                output_text += line + '\n'
+            output_text = output_text.strip('\n')
         return output_text.strip()
