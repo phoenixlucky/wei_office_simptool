@@ -49,30 +49,37 @@ class textCombing:
             else:
                 return (0, line)
 
-    def process_text(self,text):
+    def process_text(self, text):
         processed_text = re.sub(r'\n+', '\n', text)
         processed_text = re.sub(r'^(\d+)(\、|\.|\ 、|\；)?', r'\1、', processed_text, flags=re.MULTILINE)
         processed_text = re.sub(r'^\d+(\、|\.|\ 、)？(\s?)', r'1 \2', processed_text)
         processed_text = re.sub(r'\u200B', '', processed_text)
 
         adjusted_text = ""
+        adjusted_num = 0
         for line in processed_text.splitlines():
-            if line.strip()!="":
+            if line.strip() != "":
                 if line.strip() and line.strip()[0].isdigit():
                     adjusted_text += "\n" + line
                 else:
+                    adjusted_num += len(line)
+                    if adjusted_num <= 200:
+                        adjusted_text += line
+                    else:
+                        adjusted_text += line + "\n1"
+                        adjusted_num = 0
                     try:
                         # 读取配置文件
                         with open('./character.json', 'r', encoding='utf-8') as file:
                             data = json.load(file)
-                        if adjusted_text and (not (adjusted_text[-1] in data['separator']) and not (line[0] in data['separator'])):
+                        if adjusted_text and (
+                                not (adjusted_text[-1] in data['separator']) and not (line[0] in data['separator'])):
                             adjusted_text += "，"
                     except:
                         pass
-                    adjusted_text += line
         return adjusted_text.strip()
 
-    def remove_leading_spaces(self,text):
+    def remove_leading_spaces(self, text):
         # 将文本按行分割
         lines = text.split('\n')
         # 去除每行开头的空格或空字符
@@ -81,12 +88,11 @@ class textCombing:
         cleaned_text = '\n'.join(cleaned_lines)
         return cleaned_text
 
-    def format_text(self,text):
+    def format_text(self, text):
         list_char = []
         lines = [line for line in text.strip().split('\n') if line.strip() != '']
         counter_character = 1
         output_text = ""
-
         for line in lines:
             patnum, line = self.starts_with_symbol_and_number(line)
             if line in list_char:
@@ -95,15 +101,11 @@ class textCombing:
             if line.startswith('NUM'):
                 if self.global_var1 == "不重排" and (patnum == "1" or patnum == 1 or patnum == "一"):
                     counter_character = 1
-                    output_text += f"{str(counter_character)}、{self.remove_leading_spaces(line.strip()[3:])}\n"
-                    counter_character += 1
-                elif line.startswith('SSS'):
-                    output_text += f"{self.remove_leading_spaces(line[3:].strip())}\n"
-                else:
-                    output_text += line + '\n'
-                    # 最后的空行
-                output_text = output_text.strip('\n')
+                output_text += f"{str(counter_character)}、{self.remove_leading_spaces(line.strip()[3:])}\n"
+                counter_character += 1
+            elif line.startswith('SSS'):
+                output_text += f"{self.remove_leading_spaces(line[3:].strip())}\n"
             else:
-                output_text += line + '\n'
-            output_text = output_text.strip('\n')
+                output_text += f"{self.remove_leading_spaces(line.strip())}\n"
+                # 最后的空行
         return output_text.strip()
