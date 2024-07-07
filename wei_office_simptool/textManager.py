@@ -56,6 +56,7 @@ class textCombing:
         processed_text = re.sub(r'\u200B', '', processed_text)
 
         adjusted_text = ""
+        adjusted_num = 0
         for line in processed_text.splitlines():
             if line.strip() != "":
                 print(line[0])
