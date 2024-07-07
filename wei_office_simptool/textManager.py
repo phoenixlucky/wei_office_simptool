@@ -57,19 +57,32 @@ class textCombing:
 
         adjusted_text = ""
         for line in processed_text.splitlines():
-            if line.strip()!="":
-                if line.strip() and line.strip()[0].isdigit():
-                    adjusted_text += "\n" + line
+            if line.strip() != "":
+                print(line[0])
+                if line.strip()[0].isdigit():
+                    adjusted_text += "\n"
+                    adjusted_num = 0
                 else:
-                    try:
-                        # 读取配置文件
-                        with open('./character.json', 'r', encoding='utf-8') as file:
-                            data = json.load(file)
-                        if adjusted_text and (not (adjusted_text[-1] in data['separator']) and not (line[0] in data['separator'])):
+                    print(adjusted_num, line.strip()[0].isdigit())
+                    if adjusted_num == -1 and not line.strip()[0].isdigit():
+                        adjusted_text += '1、'
+                adjusted_num += len(line)
+                adjusted_text += line
+                try:
+                    # 读取配置文件
+                    with open('./character.json', 'r', encoding='utf-8') as file:
+                        data = json.load(file)
+                        if adjusted_text and (
+                                not (adjusted_text[-1] in data['separator']) and not (
+                                line[0] in data['separator'])):
                             adjusted_text += "，"
-                    except:
-                        pass
-                    adjusted_text += line
+                except:
+                    pass
+                if adjusted_num >= 200:
+                    adjusted_num = -1
+                    adjusted_text = adjusted_text[:-1] + "。"
+                    adjusted_text += "\n"
+        adjusted_text = adjusted_text.strip()[:-1] + "。"
         return adjusted_text.strip()
 
     def remove_leading_spaces(self,text):
