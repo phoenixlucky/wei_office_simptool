@@ -59,12 +59,10 @@ class textCombing:
         adjusted_num = 0
         for line in processed_text.splitlines():
             if line.strip() != "":
-                print(line[0])
                 if line.strip()[0].isdigit():
                     adjusted_text += "\n"
                     adjusted_num = 0
                 else:
-                    print(adjusted_num, line.strip()[0].isdigit())
                     if adjusted_num == -1 and not line.strip()[0].isdigit():
                         adjusted_text += '1、'
                 adjusted_num += len(line)
