@@ -107,12 +107,11 @@ class textCombing:
             if line.startswith('NUM'):
                 if self.global_var1 == "不重排" and (patnum == "1" or patnum == 1 or patnum == "一"):
                     counter_character = 1
-                    output_text += f"{str(counter_character)}、{self.remove_leading_spaces(line.strip()[3:])}\n"
-                    counter_character += 1
-                elif line.startswith('SSS'):
-                    output_text += f"{self.remove_leading_spaces(line[3:].strip())}\n"
-                else:
-                    output_text += line + '\n'
-                    # 最后的空行
-                output_text = output_text.strip('\n')
+                output_text += f"{str(counter_character)}、{self.remove_leading_spaces(line.strip()[3:])}\n"
+                counter_character += 1
+            elif line.startswith('SSS'):
+                output_text += f"{self.remove_leading_spaces(line[3:].strip())}\n"
+            else:
+                output_text += line + '\n'
+                # 最后的空行
         return output_text.strip()
