@@ -19,6 +19,10 @@ class StringBaba:
         formatted_output = f'"{formatted_output}"'
         return formatted_output
 
+    def filter_string_list(self,filter_list):
+        filtered_list = [s for s in self.input_string if any(keyword in s for keyword in filter_list)]
+        return filtered_list
+
 class DateFormat(object):
     def __init__(self, interval_day,timeclass='date'):
         self.interval_day = interval_day
