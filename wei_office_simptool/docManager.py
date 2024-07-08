@@ -9,6 +9,7 @@ import xlwings as xw
 import openpyxl
 from openpyxl import load_workbook
 from contextlib import contextmanager
+from .stringManager import StringBaba
 class FileManagement:
     def __init__(self):
         pass
@@ -140,11 +141,13 @@ class OpenExcel:
         finally:
             app.quit()
 
-    def file_show(self):
+    def file_show(self,filter=[]):
         app = xw.App(visible=False)
         wb = app.books.open(self.openfile)
         wbsn=wb.sheet_names
         app.quit()
+        if filter or filter==[""]:
+            wbsn=StringBaba(wbsn).filter_string_list(filter)
         return wbsn
 
 class eExcel():
