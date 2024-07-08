@@ -114,7 +114,7 @@ class ExcelHandler:
         xl_book.excel_write(sheet_name, results, start_row=start_row, start_col=start_col, end_row=end_row, end_col=end_col)
 
 class OpenExcel:
-    def __init__(self, openfile, savefile):
+    def __init__(self, openfile, savefile=None):
         self.openfile = openfile
         self.savefile = savefile
 
@@ -139,6 +139,13 @@ class OpenExcel:
             wb.save(self.savefile)
         finally:
             app.quit()
+
+    def file_show(self):
+        app = xw.App(visible=False)
+        wb = app.books.open(self.openfile)
+        wbsn=wb.sheet_names
+        app.quit()
+        return wbsn
 
 class eExcel():
     def __init__(self, file_name=None):
