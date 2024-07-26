@@ -72,3 +72,31 @@ class DailyEmailReport:
         body = text
         self.set_email_content(subject, body)
         self.send_email()
+
+# Example usage:
+if __name__ == '__main__':
+    # 初始化 DailyEmailReport 实例
+    email_reporter = DailyEmailReport(
+        email_host='smtp.xx.com',
+        email_port=465,
+        email_username='xxx@xx.com',
+        email_password='xxx'
+    )
+
+    # 添加收件人
+    email_reporter.add_receiver('xxx@126.com')
+    
+    title=""
+    text="""
+        Hello,
+
+        Here is your daily report.
+
+        [Insert your report content here.]
+
+        Regards,
+        Your Name
+        """
+
+    # 发送每日报告
+    email_reporter.send_daily_report(title,text)
