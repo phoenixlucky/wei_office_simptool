@@ -9,6 +9,7 @@ wei_office_simptool/chartsManager.py
 wei_office_simptool/docManager.py
 wei_office_simptool/mailManager.py
 wei_office_simptool/stringManager.py
+wei_office_simptool/textManager.py
 wei_office_simptool/timingTool.py
 wei_office_simptool.egg-info/PKG-INFO
 wei_office_simptool.egg-info/SOURCES.txt
