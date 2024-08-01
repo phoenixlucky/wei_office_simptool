@@ -5,6 +5,8 @@ import os
 import contextlib
 import shutil
 from pathlib import Path
+
+import pandas as pd
 import xlwings as xw
 import openpyxl
 from openpyxl import load_workbook
@@ -149,6 +151,23 @@ class OpenExcel:
         if filter or filter==[""]:
             wbsn=StringBaba(wbsn).filter_string_list(filter)
         return wbsn
+
+class ExcelOperation():
+    def __init__(self, input_file,output_folder):
+        self.input_file = input_file
+        self.output_folder= output_folder
+    def split_table(self):
+        #拆分表格
+        excel_file = pd.ExcelFile(self.input_file)
+
+        # 遍历每个工作表
+        for sheet_name in excel_file.sheet_names:
+            # 读取当前工作表的数据
+            df = pd.read_excel(self.input_file, sheet_name=sheet_name)
+            # 定义输出文件名，使用工作表的名称
+            output_file = f'{sheet_name}.xlsx'
+            # 将当前工作表的数据保存为新的 Excel 文件
+            df.to_excel(f"{self.output_folder}/{output_file}", index=False)
 
 class eExcel():
     def __init__(self, file_name=None):
