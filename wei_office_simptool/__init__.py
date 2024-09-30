@@ -39,13 +39,14 @@ from .mailManager import *
 from .stringManager import *
 from .chartsManager import *
 from .textManager import *
+from .ollamaManager import *
 
 # 定义__all__变量
 __all__ = ['SQLManager', 'baseColor', 'timingTool', 'docManager', 'mailManager', 'stringManager','chartsManager',
-           'textManager']
+           'textManager','ollamaManager']
 
 #执行初始化代码
-print("...WEI神启动...")
+print("wei...The Lord is here, the gods shun...")
 
 # 定义包级别的变量和函数
 #package_variable = 123
