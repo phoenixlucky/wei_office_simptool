@@ -1,1 +1,13 @@
 
+.idea/modules.xml
+.idea/test.iml
+.idea/inspectionProfiles/profiles_settings.xml
+dist/wei_office_simptool-0.0.22.tar.gz
+dist/wei_office_simptool-0.0.25.tar.gz
+dist/wei_office_simptool-0.0.26.tar.gz
+dist/wei_office_simptool-0.0.27.tar.gz
+dist/wei_office_simptool-0.0.28.tar.gz
+dist/wei_office_simptool-0.0.29.tar.gz
+wei_office_simptool.egg-info/PKG-INFO
+.idea/vcs.xml
+.idea/.gitignore
