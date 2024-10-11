@@ -8,6 +8,7 @@ wei_office_simptool/baseColor.py
 wei_office_simptool/chartsManager.py
 wei_office_simptool/docManager.py
 wei_office_simptool/mailManager.py
+wei_office_simptool/ollamaManager.py
 wei_office_simptool/stringManager.py
 wei_office_simptool/textManager.py
 wei_office_simptool/timingTool.py
