@@ -5,7 +5,7 @@ import jieba
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-from wordcloud import WordCloud
+#from wordcloud import WordCloud
 
 class TrendPredictor:
     def __init__(self, market_trend_df, date_col, smoothed_avg_col,
