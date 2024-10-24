@@ -36,45 +36,45 @@ from wei_office_simptool import MySQLDatabase
 ```
 ##### 📌MySQL 连接配置
 ```python
-    mysql_config = {
-        'host': 'your_host',
-        'user': 'your_user',
-        'password': 'your_password',
-        'database': 'your_database'
-    }
+mysql_config = {
+    'host': 'your_host',
+    'user': 'your_user',
+    'password': 'your_password',
+    'database': 'your_database'
+}
 ```
 ##### ✏️创建 MySQLDatabase 对象
 ```python
-    db = MySQLDatabase(mysql_config)
+db = MySQLDatabase(mysql_config)
 ```
 ##### 📥插入数据
 ```python
-    insert_query = "INSERT INTO your_table (column1, column2) VALUES (%s, %s)"
-    insert_params = ("value1", "value2")
-    db.execute_query(insert_query, insert_params)
+insert_query = "INSERT INTO your_table (column1, column2) VALUES (%s, %s)"
+insert_params = ("value1", "value2")
+db.execute_query(insert_query, insert_params)
 ```
 ##### 🔍查询数据
 ```python
-    select_query = "SELECT * FROM your_table"
-    results = db.fetch_query(select_query)
-    for row in results:
-        print(row)
+select_query = "SELECT * FROM your_table"
+results = db.fetch_query(select_query)
+for row in results:
+    print(row)
 ```
 ##### ⌛更新数据
 ```python
-    update_query = "UPDATE your_table SET column1 = %s WHERE column2 = %s"
-    update_params = ("new_value", "value2")
-    db.execute_query(update_query, update_params)
+update_query = "UPDATE your_table SET column1 = %s WHERE column2 = %s"
+update_params = ("new_value", "value2")
+db.execute_query(update_query, update_params)
 ```
 ##### 🔪删除数据
 ```python
-    delete_query = "DELETE FROM your_table WHERE column1 = %s"
-    delete_params = ("new_value",)
-    db.execute_query(delete_query, delete_params)
+delete_query = "DELETE FROM your_table WHERE column1 = %s"
+delete_params = ("new_value",)
+db.execute_query(delete_query, delete_params)
 ```
 ##### 🚪关闭连接
 ```python
-    db.close()
+db.close()
 ```
 
 #### 2. ExcelHandler 类
@@ -84,11 +84,11 @@ from wei_office_simptool import MySQLDatabase
 from wei_office_simptool import OpenExcel,ExcelHandler
 
 # 示例代码
-     home_file = pathlib.Path.cwd()
-     openfile = pathlib.Path(home_file) / "1.xlsx"
-     savefile = pathlib.Path(home_file) / "2.xlsx"
-     with OpenExcel(openfile, savefile).my_open() as ws:
-         eExcel.fast_write(ws, results, sr, sc, er=0, ec=0, re=0)
+home_file = pathlib.Path.cwd()
+openfile = pathlib.Path(home_file) / "1.xlsx"
+savefile = pathlib.Path(home_file) / "2.xlsx"
+with OpenExcel(openfile, savefile).my_open() as ws:
+    eExcel.fast_write(ws, results, sr, sc, er=0, ec=0, re=0)
 ```
 
 #### 2.1 eExcel 类
@@ -126,7 +126,7 @@ x=DateFormat(interval_day=0,timeclass='date').get_timeparameter(Format="%Y-%m-%d
 print(x)
 
 # 格式化df的表的列属性
- df = DateFormat(interval_day=0,timeclass='date').datetime_standar(df, '日期')
+df = DateFormat(interval_day=0,timeclass='date').datetime_standar(df, '日期')
 ```
 
 #### 5. FileManagement 类
