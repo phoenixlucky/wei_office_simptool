@@ -35,7 +35,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 setup(
     name='wei_office_simptool',
-    version='0.0.33',
+    version='0.1.01',
     author="Ethan Wilkins",
     author_email="thisluckyboy@126.com",
     description="""这是一个简化办公工作的高效工具库，专注于提供常见任务的快捷处理能力。它包含以下核心功能模块：
@@ -67,5 +67,5 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.10',
+    python_requires='>=3.12',
 )
