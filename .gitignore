@@ -14,3 +14,5 @@ wei_office_simptool.egg-info/PKG-INFO
 chat_history.toml
 wei_office_simptool/messages.toml
 dist/wei_office_simptool-0.0.32.tar.gz
+dist/wei_office_simptool-0.1.1.tar.gz
+dist/wei_office_simptool-0.1.1-py3-none-any.whl

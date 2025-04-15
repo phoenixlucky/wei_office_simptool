@@ -29,24 +29,29 @@
 import mysql.connector
 import openpyxl
 import pandas as pd
-import pymysql
 from .timingTool import fn_timer
-
+from typing import List, Optional, Union, Any
 
 class Database:
-    def __init__(self, host, port, user, password, db):
-        self.connection_state = 0
+    def __init__(self, host: str, port: int, user: str, password: str, db: str, charset: str = 'utf8'):
+        """
+        Database class for managing MySQL connections and operations.
+        """
+        self.connection_state = False
         self.connection = None
         self.host = host
         self.port = port
         self.user = user
         self.password = password
         self.db = db
-        self.charset = 'utf8'
+        self.charset = charset
 
-    def connect(self):
-        try:
-            if self.connection_state == 0:
+    def _connect(self) -> None:
+        """
+        Establish a connection to the database if not already connected.
+        """
+        if not self.connection_state:
+            try:
                 self.connection = pymysql.connect(
                     host=self.host,
                     port=self.port,
@@ -56,79 +61,116 @@ class Database:
                     charset=self.charset,
                     cursorclass=pymysql.cursors.DictCursor
                 )
-                self.connection_state = 1
-            else:
-                self.connection_state = 1
-        except Exception as e:
-            raise Exception(f"Connection failed: {e}")
+                self.connection_state = True
+            except Exception as e:
+                raise ConnectionError(f"Database connection failed: {e}")
 
-    def close(self):
-        try:
-            if self.connection:
-                self.connection.cursor().close()
+    def _close(self) -> None:
+        """
+        Close the database connection if open.
+        """
+        if self.connection_state and self.connection:
+            try:
                 self.connection.close()
-                self.connection_state = 0
-        except Exception as e:
-            raise Exception(f"Error closing connection: {e}")
+                self.connection_state = False
+            except Exception as e:
+                raise RuntimeError(f"Error closing the connection: {e}")
 
-    def execute_sql(self, sql, fetch_all=True, df=False, purchases=None, operation_mode="s"):
+    def _execute(
+        self, 
+        sql: str, 
+        params: Optional[Union[List[tuple], tuple]] = None, 
+        fetch_all: bool = True, 
+        as_df: bool = False, 
+        procedure: bool = False
+    ) -> Optional[Union[List[dict], pd.DataFrame]]:
+        """
+        Execute a SQL query or stored procedure.
+        """
+        self._connect()  # Ensure connection is open
         try:
             with self.connection.cursor() as cursor:
-                if purchases:
-                    cursor.executemany(sql, purchases)
-                elif operation_mode == "c":
-                    # Assuming sql is the stored procedure name
-                    cursor.callproc(sql)
-                    cursor.connection.commit()
+                if procedure:
+                    cursor.callproc(sql, params)
+                elif params:
+                    cursor.executemany(sql, params) if isinstance(params, list) else cursor.execute(sql, params)
                 else:
                     cursor.execute(sql)
 
                 if fetch_all:
-                    if df:
-                        return pd.DataFrame(cursor.fetchall())
-                        cursor.connection.commit()
-                    else:
-                        return cursor.fetchall()
-                        cursor.connection.commit()
-                else:
-                    self.connection.commit()
+                    results = cursor.fetchall()
+                    return pd.DataFrame(results) if as_df else results
+
+                self.connection.commit()
         except Exception as e:
             self.connection.rollback()
-            raise Exception(f"Error executing SQL: {e}")
+            raise RuntimeError(f"Error executing query: {e}")
+        finally:
+            self._close()
 
-    def fetchall(self, sql):
-        self.connect()
-        return self.execute_sql(sql)
+    def fetch_all(self, sql: str) -> List[dict]:
+        """
+        Fetch all results from a query.
+        """
+        return self._execute(sql, fetch_all=True, as_df=False)
 
-    def writesql(self, sql):
-        self.connect()
-        self.execute_sql(sql, fetch_all=False)
+    def fetch_as_df(self, sql: str) -> pd.DataFrame:
+        """
+        Fetch results as a pandas DataFrame.
+        """
+        return self._execute(sql, fetch_all=True, as_df=True)
 
-    def writesqlmany(self, sql, purchases):
-        self.connect()
-        self.execute_sql(sql, fetch_all=False, purchases=purchases)
+    def execute_write(self, sql: str, params: Optional[Union[List[tuple], tuple]] = None) -> None:
+        """
+        Execute a write (INSERT, UPDATE, DELETE) operation.
+        """
+        self._execute(sql, params=params, fetch_all=False)
 
-    def callsql(self, sql):
-        self.connect()
-        self.execute_sql(sql, fetch_all=False,operation_mode = "c")
+    def execute_many(self, sql: str, params: List[tuple]) -> None:
+        """
+        Execute many write operations (batch insert/update/delete).
+        """
+        self._execute(sql, params=params, fetch_all=False)
 
-    def to_df(self, sql):
-        self.connect()
-        return pd.DataFrame(self.execute_sql(sql))
+    def call_procedure(self, procedure_name: str, params: Optional[tuple] = None) -> None:
+        """
+        Call a stored procedure.
+        """
+        self._execute(procedure_name, params=params, fetch_all=False, procedure=True)
 
-    @fn_timer
-    def __call__(self, sql, purchases=None, operation_mode="s", i=0):
-        if i == 0:
-            if operation_mode == "s":
-                return self.fetchall(sql)
-            elif operation_mode == "w":
-                self.writesql(sql)
-            elif operation_mode == "c":
-                self.callsql(sql)
-            elif operation_mode == "wm":
-                self.writesqlmany(sql, purchases)
+    def __call__(
+        self, 
+        sql: str, 
+        params: Optional[Union[List[tuple], tuple]] = None, 
+        operation_mode: str = "r", 
+        as_df: bool = False
+    ) -> Optional[Union[List[dict], pd.DataFrame, None]]:
+        """
+        A unified method for executing different types of operations.
+        
+        Modes:
+            - 'r': Read query, fetch results.
+            - 'w': Write operation.
+            - 'm': Write many (batch operations).
+            - 'p': Call a stored procedure.
+        """
+        if operation_mode == "r":
+            return self.fetch_as_df(sql) if as_df else self.fetch_all(sql)
+        elif operation_mode == "w":
+            self.execute_write(sql, params=params)
+        elif operation_mode == "m":
+            if not isinstance(params, list):
+                raise ValueError("For batch operations, 'params' must be a list of tuples.")
+            self.execute_many(sql, params=params)
+        elif operation_mode == "p":
+            self.call_procedure(sql, params=params)
         else:
-            return self.to_df(sql)
+            raise ValueError(f"Invalid operation mode: {operation_mode}")
+
+# Example Usage:
+# db = Database(host='localhost', port=3306, user='root', password='password', db='testdb')
+# db('SELECT * FROM users', operation_mode='r')
+# db('INSERT INTO users (name, age) VALUES (%s, %s)', params=[('Alice', 30), ('Bob', 25)], operation_mode='m')
 
 class MySQLDatabase:
     def __init__(self, config):
@@ -175,7 +217,3 @@ class MySQLDatabase:
             print(f"Error: {err}")
         finally:
             cursor.close()
-
-
-
-

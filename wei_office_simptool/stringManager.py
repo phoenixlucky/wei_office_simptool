@@ -13,6 +13,7 @@ class StringBaba:
         input_lines = self.input_string.strip()
         # 将输入字符串按换行符分割成列表
         lines = input_lines.split('\n')
+        lines=[line.strip() for line in lines]
         # 使用 join 函数将列表元素连接成一个字符串，并在元素之间加上 ","
         formatted_output = '","'.join(lines)
         # 给整个字符串加上双引号
@@ -105,3 +106,4 @@ class eFormat(object):
         except Exception as e:
             print(e)
             pass
+

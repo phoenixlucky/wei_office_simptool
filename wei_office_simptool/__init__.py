@@ -37,7 +37,7 @@ from .timingTool import *
 from .docManager import *
 from .mailManager import *
 from .stringManager import *
-from .chartsManager import *
+from .chartsManager import TrendPredictor,MultipleTrendPredictor,TextAnalysis
 from .textManager import *
 from .ollamaManager import *
 
