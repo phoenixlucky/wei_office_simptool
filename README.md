@@ -190,6 +190,57 @@ ta.plot_wordclouds(word_freqs, titles)
     print("聊天结束。")
 ```
 
+## 9 DailyEmailReport 类
+用于发送每日报告邮件，支持HTML和纯文本格式。
+
+```python
+from wei_office_simptool import DailyEmailReport
+
+# 初始化 DailyEmailReport 实例
+email_reporter = DailyEmailReport(
+    email_host='smtp.example.com',
+    email_port=465,
+    email_username='your_email@example.com',
+    email_password='your_password'
+)
+
+# 添加收件人
+email_reporter.add_receiver('recipient@example.com')
+
+# 发送纯文本邮件
+text_content = """
+Hello,
+
+Here is your daily report.
+
+[Insert your report content here.]
+
+Regards,
+Your Name
+"""
+email_reporter.send_daily_report("Daily Report", text_content)
+
+# 发送HTML邮件 - 方式1
+html_content = """
+<html>
+  <body>
+    <h1>Daily Report</h1>
+    <p>Hello,</p>
+    <p>Here is your <b>daily report</b>.</p>
+    <ul>
+      <li>Item 1</li>
+      <li>Item 2</li>
+    </ul>
+    <p>Regards,<br>
+    Your Name</p>
+  </body>
+</html>
+"""
+email_reporter.send_daily_report("HTML Report", html_content, is_html=True)
+
+# 发送HTML邮件 - 方式2
+email_reporter.send_daily_report("HTML Report", html_content=html_content)
+```
 
 ## 贡献
 #### 有任何问题或建议，请提出 issue。欢迎贡献代码！

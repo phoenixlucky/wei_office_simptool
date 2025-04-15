@@ -17,11 +17,16 @@ class DailyEmailReport:
     def add_receiver(self, receiver_email):
         self.receivers.append(receiver_email)
 
-    def set_email_content(self, subject, body, file_paths=None, file_names=None):
+    def set_email_content(self, subject, body, file_paths=None, file_names=None, is_html=False):
         self.msg['From'] = self.email_username
         self.msg['To'] = ', '.join(self.receivers)
         self.msg['Subject'] = subject
-        self.msg.attach(MIMEText(body, 'plain'))
+        
+        if is_html:
+            self.msg.attach(MIMEText(body, 'html', 'utf-8'))
+        else:
+            self.msg.attach(MIMEText(body, 'plain'))
+            
         if file_paths and file_names:
             for file_path, file_name in zip(file_paths, file_names):
                 att1 = MIMEText(open(file_path + file_name, 'rb').read(), 'base64', 'utf-8')
@@ -36,10 +41,25 @@ class DailyEmailReport:
             server.sendmail(self.email_username, self.receivers, self.msg.as_string())
             print('邮件发送成功！')
 
-    def send_daily_report(self,title,text):
+    def send_daily_report(self, title, text=None, is_html=False, html_content=None):
+        """
+        发送每日报告邮件，支持HTML和纯文本格式
+        支持两种调用方式:
+        1. send_daily_report(title, text, is_html=True)
+        2. send_daily_report(title, html_content=html_text)
+        """
         subject = f'{title} - {datetime.date.today()}'
-        body = text
-        self.set_email_content(subject, body)
+        
+        # 处理两种不同的调用方式
+        if html_content is not None:
+            # 如果提供了html_content参数，则使用HTML格式
+            body = html_content
+            is_html = True
+        else:
+            # 否则使用text参数
+            body = text
+        
+        self.set_email_content(subject, body, is_html=is_html)
         self.send_email()
 
 # Example usage:
@@ -68,4 +88,22 @@ if __name__ == '__main__':
         """
 
     # 发送每日报告
-    email_reporter.send_daily_report(title,text)
+    email_reporter.send_daily_report(title, text)
+
+    # HTML 示例
+    html_content = """
+    <html>
+      <body>
+        <h1>Daily Report</h1>
+        <p>Hello,</p>
+        <p>Here is your <b>daily report</b>.</p>
+        <ul>
+          <li>Item 1</li>
+          <li>Item 2</li>
+        </ul>
+        <p>Regards,<br>
+        Your Name</p>
+      </body>
+    </html>
+    """
+    # email_reporter.send_daily_report("HTML Report", html_content, is_html=True)
