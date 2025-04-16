@@ -35,7 +35,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 setup(
     name='wei_office_simptool',
-    version='0.1.2',
+    version='0.1.3',
     author="Ethan Wilkins",
     author_email="thisluckyboy@126.com",
     description="""这是一个简化办公工作的高效工具库，专注于提供常见任务的快捷处理能力。它包含以下核心功能模块：

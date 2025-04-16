@@ -31,6 +31,7 @@ import openpyxl
 import pandas as pd
 from .timingTool import fn_timer
 from typing import List, Optional, Union, Any
+import pymysql
 
 class Database:
     def __init__(self, host: str, port: int, user: str, password: str, db: str, charset: str = 'utf8'):
