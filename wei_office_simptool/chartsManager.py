@@ -7,14 +7,12 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from wordcloud import WordCloud
 from statsmodels.tsa.stattools import adfuller
-from pmdarima import auto_arima
-import pmdarima as pm
 import warnings
 
 class TrendPredictor:
     def __init__(self, market_trend_df, date_col, smoothed_avg_col,
                  rise_label='上升', fall_label='下滑', flat_label='横盘',
-                 freq='B', order=None, steps=7, sortdata='逆序', auto_order=True):
+                 freq='B', order=None, steps=7, sortdata='逆序'):
         self.market_trend_df = market_trend_df.copy()
         self.date_col = date_col
         self.smoothed_avg_col = smoothed_avg_col
@@ -25,7 +23,6 @@ class TrendPredictor:
         self.order = order if order else (5, 1, 0)
         self.steps = steps
         self.sortdata = sortdata
-        self.auto_order = auto_order
         self._prepare_data()
 
     def _prepare_data(self):
@@ -39,31 +36,13 @@ class TrendPredictor:
         
         # 检查数据平稳性
         self.is_stationary = self._check_stationarity(self.reversed_market_trend_df)
-        
-        # 如果启用自动参数选择，确定最佳ARIMA参数
-        if self.auto_order:
-            self.order = self._find_best_order()
 
     def _check_stationarity(self, series):
         """检查时间序列是否平稳"""
         result = adfuller(series.dropna())
         return result[1] <= 0.05  # p值小于0.05表示序列是平稳的
     
-    def _find_best_order(self):
-        """使用auto_arima自动寻找最佳ARIMA参数"""
-        warnings.filterwarnings("ignore")
-        # 使用pmdarima的auto_arima函数自动寻找最佳参数
-        model = pm.auto_arima(
-            self.reversed_market_trend_df,
-            start_p=0, start_q=0,
-            max_p=5, max_q=5, max_d=2,
-            seasonal=False,
-            trace=False,
-            error_action='ignore',
-            suppress_warnings=True,
-            stepwise=True
-        )
-        return model.order
+
 
     def original_data(self):
         return self.market_trend_df
