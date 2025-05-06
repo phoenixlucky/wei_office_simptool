@@ -7,7 +7,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from wordcloud import WordCloud
 from statsmodels.tsa.stattools import adfuller
-from statsmodels.tsa.arima_model import auto_arima
+from pmdarima import auto_arima
 import pmdarima as pm
 import warnings
 
