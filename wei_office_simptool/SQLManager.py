@@ -217,4 +217,33 @@ class MySQLDatabase:
         except mysql.connector.Error as err:
             print(f"Error: {err}")
         finally:
+            cursor.close()            
+            
+    def call_procedure(self, proc_name, params=None):
+        """
+        调用存储过程的方法
+        :param proc_name: 存储过程名称
+        :param params: 存储过程参数,可以是单个值或元组
+        :return: 如果存储过程有返回结果则返回结果集,否则返回None
+        """
+        cursor = self.connection.cursor(dictionary=True)
+        try:
+            if params:
+                cursor.callproc(proc_name, params if isinstance(params, (list, tuple)) else (params,))
+            else:
+                cursor.callproc(proc_name)
+            
+            # 获取存储过程的所有结果集
+            results = []
+            for result in cursor.stored_results():
+                results.extend(result.fetchall())
+                
+            self.connection.commit()
+            return results if results else None
+            
+        except mysql.connector.Error as err:
+            print(f"存储过程调用错误: {err}")
+            self.connection.rollback()
+            return None
+        finally:
             cursor.close()
