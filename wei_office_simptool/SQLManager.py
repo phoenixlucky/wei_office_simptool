@@ -249,7 +249,7 @@ class MySQLDatabase:
             
             # 获取存储过程的所有结果集
             results = []
-            for result in cursor.stored_results():
+            for result in cursor.stored_results:
                 results.extend(result.fetchall())
                 
             self.connection.commit()

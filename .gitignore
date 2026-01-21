@@ -1,4 +1,3 @@
-
 .idea/modules.xml
 .idea/test.iml
 .idea/inspectionProfiles/profiles_settings.xml
@@ -16,3 +15,15 @@ wei_office_simptool/messages.toml
 dist/wei_office_simptool-0.0.32.tar.gz
 dist/wei_office_simptool-0.1.1.tar.gz
 dist/wei_office_simptool-0.1.1-py3-none-any.whl
+dist/wei_office_simptool-0.1.8.tar.gz
+.vscode/settings.json
+dist/wei_office_simptool-0.1.9-py3-none-any.whl
+dist/wei_office_simptool-0.1.9.tar.gz
+wei_office_simptool.egg-info/PKG-INFO
+wei_office_simptool.egg-info/requires.txt
+wei_office_simptool.egg-info/SOURCES.txt
+wei_office_simptool.egg-info/top_level.txt
+wei_office_simptool.egg-info/PKG-INFO
+wei_office_simptool.egg-info/requires.txt
+wei_office_simptool.egg-info/SOURCES.txt
+wei_office_simptool.egg-info/top_level.txt
