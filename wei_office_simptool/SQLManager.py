@@ -195,11 +195,25 @@ class MySQLDatabase:
         cursor = self.connection.cursor()
         try:
             if params:
-                cursor.execute(query, params)
+                if isinstance(params, list):
+                    cursor.executemany(query, params)
+                else:
+                    cursor.execute(query, params)
             else:
                 cursor.execute(query)
             self.connection.commit()
             print("Query executed successfully")
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+        finally:
+            cursor.close()
+
+    def execute_many(self, query, params_list):
+        cursor = self.connection.cursor()
+        try:
+            cursor.executemany(query, params_list)
+            self.connection.commit()
+            print("Batch query executed successfully")
         except mysql.connector.Error as err:
             print(f"Error: {err}")
         finally:
