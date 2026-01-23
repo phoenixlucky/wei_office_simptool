@@ -18,7 +18,7 @@ pip install wei_office_simptool --upgrade
 
 #### 🔧功能
 
-#### 1. Database 类 （可以连接各种数据库）
+<!-- #### 1. Database 类 （可以连接各种数据库） 弃用
 用于连接和操作数据库。
 ```python
 from wei_office_simptool import Database
@@ -27,9 +27,9 @@ from wei_office_simptool import Database
 db = Database(host='your_host', port=3306, user='your_user', password='your_password', db='your_database')
 result = db("SELECT * FROM your_table", operation_mode="s")
 print(result)
-```
+``` -->
 
-#### 1.1. MySQLDatabase 类
+#### 1. MySQLDatabase 类
 主要用于Mysql数据库的快速连接
 ```python
 from wei_office_simptool import MySQLDatabase
@@ -270,6 +270,6 @@ The software is provided "as is," without any warranty of any kind, either expre
 ```本软件以“原样”提供，不附带任何形式的明示或暗示保证，包括但不限于对适销性、特定用途适用性以及不侵权的保证。在任何情况下，作者或版权持有者均不对因使用本软件或与本软件的其他交易相关的任何索赔、损害或其他责任承担责任，无论是合同、侵权或其他原因。```
 
 ##### 版权和许可
-###### © 2024 Ethan Wilkins
+###### © 2026 Ethan Wilkins
 
 ###### 该项目基于 MIT 许可证 分发。
