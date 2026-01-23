@@ -76,6 +76,20 @@ db.execute_query(delete_query, delete_params)
 ```python
 db.close()
 ```
+##### SQLAI智能聊天机器人
+```python
+from wei_office_simptool import SQLManager
+
+# 示例代码
+cfg = {
+    'user': 'root',
+    'password': '你的密码',
+    'host': '127.0.0.1',
+    'database': 'mlcorpus'
+}
+db = SQLManager.MySQLDatabase(cfg)
+db.run_ai_chatbot(chat_history_size=5, system_msg="System: You are a helpful AI assistant.")
+```
 
 #### 2. ExcelHandler 类
 用于处理 Excel 文件，包括写入和读取。

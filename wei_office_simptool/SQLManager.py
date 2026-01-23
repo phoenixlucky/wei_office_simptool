@@ -27,10 +27,11 @@
 @email:thisluckyboy@126.com
 """
 import mysql.connector
+from collections import deque
 # import openpyxl
 # import pandas as pd
 from .timingTool import fn_timer
-# from typing import List, Optional, Union, Any
+from typing import List, Optional, Union, Any
 # import pymysql
 
 # class Database:
@@ -249,7 +250,7 @@ class MySQLDatabase:
             
             # 获取存储过程的所有结果集
             results = []
-            for result in cursor.stored_results:
+            for result in cursor.stored_results():
                 results.extend(result.fetchall())
                 
             self.connection.commit()
@@ -261,3 +262,36 @@ class MySQLDatabase:
             return None
         finally:
             cursor.close()
+
+    def run_ai_chatbot(self, chat_history_size=5, system_msg="System: You are a helpful AI assistant."):
+        try:
+            from mysql.ai.genai import MyLLM
+        except Exception as e:
+            print(f"AI模块加载失败: {e}")
+            return
+        my_llm = MyLLM(self.connection)
+        chat_history = deque(maxlen=chat_history_size)
+        while True:
+            user_input = input("\nUser: ")
+            if user_input.lower() in ("exit", "quit"):
+                break
+            history = [system_msg] + list(chat_history) + [f"User: {user_input}"]
+            prompt = "\n".join(history)
+            try:
+                response = my_llm.invoke(prompt)
+            except Exception as err:
+                print(f"AI调用错误: {err}")
+                continue
+            print(f"Bot: {response}")
+            chat_history.append(f"User: {user_input}")
+            chat_history.append(f"Bot: {response}")
+
+# from wei_office_simptool import SQLManager
+# cfg = {
+#     'user': 'root',
+#     'password': '你的密码',
+#     'host': '127.0.0.1',
+#     'database': 'mlcorpus'
+# }
+# db = SQLManager.MySQLDatabase(cfg)
+# db.run_ai_chatbot(chat_history_size=5, system_msg="System: You are a helpful AI assistant.")
