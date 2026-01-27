@@ -34,7 +34,8 @@ ______ |  |__   ____   ____   ____ |__|__  ___
 from .SQLManager import *
 from .baseColor import *
 from .timingTool import *
-from .docManager import *
+from .excelManager import *
+from .fileManager import *
 from .mailManager import *
 from .stringManager import *
 from .chartsManager import TrendPredictor,MultipleTrendPredictor,TextAnalysis
@@ -42,7 +43,7 @@ from .textManager import *
 from .ollamaManager import *
 
 # 定义__all__变量
-__all__ = ['SQLManager', 'baseColor', 'timingTool', 'docManager', 'mailManager', 'stringManager','chartsManager',
+__all__ = ['SQLManager', 'baseColor', 'timingTool', 'excelManager','fileManager', 'mailManager', 'stringManager','chartsManager',
            'textManager','ollamaManager']
 
 #执行初始化代码
