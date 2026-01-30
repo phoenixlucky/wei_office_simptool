@@ -353,7 +353,7 @@ email_reporter.send_daily_report("HTML Report", html_content=html_content)
 ## 贡献
 ###### 💡有任何问题或建议，请提出 issue。欢迎贡献代码！
 
-##### Copyright (c) 2024 The Python Packaging Authority
+##### Copyright (c) 2026 The Python Packaging Authority
  
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
