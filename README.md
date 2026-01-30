@@ -91,29 +91,110 @@ db = SQLManager.MySQLDatabase(cfg)
 db.run_ai_chatbot(chat_history_size=5, system_msg="System: You are a helpful AI assistant.")
 ```
 
-#### 2. ExcelHandler 类
-用于处理 Excel 文件，包括写入和读取。
+#### 2. Excel 相关类
+用于创建/读取/写入 Excel，以及通过 Excel 应用刷新数据连接。
 
 ```python
-from wei_office_simptool import OpenExcel,ExcelHandler
+from pathlib import Path
+from wei_office_simptool import OpenExcel, ExcelHandler, eExcel, ExcelOperation
 
-# 示例代码
-home_file = pathlib.Path.cwd()
-openfile = pathlib.Path(home_file) / "1.xlsx"
-savefile = pathlib.Path(home_file) / "2.xlsx"
-with OpenExcel(openfile, savefile).my_open() as ws:
-    eExcel.fast_write(ws, results, sr, sc, er=0, ec=0, re=0)
+# 1) 通过 OpenExcel 打开并保存（自动创建不存在文件）
+openfile = str(Path.cwd() / "1.xlsx")
+savefile = str(Path.cwd() / "2.xlsx")
+with OpenExcel(openfile, savefile).my_open() as wb:
+    wb.fast_write('sheet1', [[111, 222], [333, 444]], sr=1, sc=1)
+
+# 2) 使用 ExcelHandler 按区块写入/读取
+eh = ExcelHandler(savefile)
+eh.excel_write('sheet1', [[555]], start_row=3, start_col=3, end_row=3, end_col=3)
+rows = eh.excel_read('sheet1', start_row=1, start_col=1, end_row=3, end_col=3)
+print(rows)
+
+# 3) 列出工作表并按关键词过滤
+sheets = OpenExcel(openfile).file_show(filter=['sheet', '报表'])
+print(sheets)
+
+# 4) 将多工作表拆分为多个文件
+ExcelOperation(input_file=savefile, output_folder=str(Path.cwd() / "out")).split_table()
 ```
 
 #### 2.1 eExcel 类
-创建、写入表
+用于快速创建并写入 Excel（不会依赖 Excel 应用）。
 ```python
 from wei_office_simptool import eExcel
-eExcel(file_name=r"D:\Deskto\1.xlsx")
-#读取
-x=eExcel(file_name=r"D:\Deskto\1.xlsx").excel_read(start_row, start_col, end_row, end_col)
-#写入
-eExcel(file_name=r"D:\Deskto\1.xlsx").excel_write(ws="Sheet1",results, start_row, start_col, end_row, end_col)
+
+wb = eExcel(file_name=r"D:\Desktop\1.xlsx")
+data = [[1, 2], [3, 4]]
+wb.fast_write(ws="sheet1", results=data, sr=1, sc=1)
+readback = wb.excel_read(start_row=1, start_col=1, end_row=2, end_col=2)
+print(readback)
+```
+
+#### 2.2 快速创建与空表写入
+无需手动创建文件或工作表，支持自动创建并写入。
+```python
+from wei_office_simptool import eExcel, ExcelHandler
+
+# 使用 eExcel.quick 快速创建（不存在则创建）
+wb = eExcel.quick(file_name=r"D:\Desktop\quick.xlsx", default_sheet="sheet1")
+wb.fast_write(ws="sheet1", results=[[10, 20], [30, 40]], sr=1, sc=1)
+
+# 使用 ExcelHandler 写入不存在的工作表，自动创建
+eh = ExcelHandler(r"D:\Desktop\quick.xlsx")
+eh.fast_write("new_sheet", [[99]], start_row=1, start_col=1, xl_book=eh)
+```
+
+#### 2.3 快速范围写入说明
+fast_write 会根据数据自动计算写入范围：
+- 当参数 re=0（默认）时，会根据传入的二维数组自动计算结束行列
+- 当参数 re=1 时，使用显式传入的 er/ec（结束行列）
+```python
+# 自动范围计算（re=0）
+wb.fast_write(ws="sheet1", results=[[1, 2], [3, 4]], sr=1, sc=1)
+
+# 显式指定范围（re=1）
+wb.fast_write(ws="sheet1", results=[[1, 2], [3, 4]], sr=1, sc=1, er=10, ec=10, re=1)
+```
+
+#### 2.4 工作表筛选
+file_show 支持传入 None、字符串或字符串列表，按关键词过滤工作表名：
+```python
+from wei_office_simptool import OpenExcel
+openfile = r"D:\Desktop\quick.xlsx"
+
+# 全部工作表
+print(OpenExcel(openfile).file_show())
+
+# 单关键词
+print(OpenExcel(openfile).file_show(filter="sheet"))
+
+# 多关键词
+print(OpenExcel(openfile).file_show(filter=["sheet", "报表"]))
+```
+
+#### 2.5 常见流水线示例
+从创建到写入、刷新连接、拆分保存的一条龙流程：
+```python
+from pathlib import Path
+from wei_office_simptool import eExcel, OpenExcel, ExcelHandler, ExcelOperation
+
+base = Path.cwd()
+f = str(base / "pipeline.xlsx")
+
+# 1) 快速创建并写入
+wb = eExcel.quick(f, default_sheet="sheet1")
+wb.fast_write("sheet1", [[1, 2], [3, 4]], sr=1, sc=1)
+
+# 2) 使用 ExcelHandler 追加写入（自动创建新工作表）
+eh = ExcelHandler(f)
+eh.fast_write("sheet2", [[5, 6]], start_row=1, start_col=1, xl_book=eh)
+
+# 3) 通过 Excel 应用刷新并保存（需要本机 Excel）
+with OpenExcel(f).open_save_Excel() as appwb:
+    appwb.api.RefreshAll()
+
+# 4) 拆分工作表到单文件
+ExcelOperation(input_file=f, output_folder=str(base / "out")).split_table()
 ```
 
 #### 3. eSend 类
