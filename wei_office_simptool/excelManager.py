@@ -4,6 +4,8 @@ import pandas as pd
 import xlwings as xw
 import openpyxl
 from openpyxl import load_workbook
+from openpyxl.styles import Font, PatternFill, Alignment
+from openpyxl.utils import get_column_letter
 from contextlib import contextmanager
 from .stringManager import StringBaba
 
@@ -24,6 +26,27 @@ def _auto_range(sr: int, sc: int, results: Sequence[Sequence], re: int, er: int,
         er = len(results) + sr - 1
         ec = len(results[0]) + sc - 1
     return er, ec
+
+def _apply_styles(ws, start_row: int, start_col: int, end_row: int, end_col: int) -> None:
+    font = Font(name="Microsoft YaHei", size=11)
+    header_fill = PatternFill(fill_type="solid", fgColor="0070C0")
+    align = Alignment(vertical="center")
+    for r in range(start_row, end_row + 1):
+        for c in range(start_col, end_col + 1):
+            cell = ws.cell(row=r, column=c)
+            cell.font = font
+            cell.alignment = align
+            if r == start_row:
+                cell.fill = header_fill
+    for c in range(start_col, end_col + 1):
+        letter = get_column_letter(c)
+        max_len = 0
+        for r in range(start_row, end_row + 1):
+            val = ws.cell(row=r, column=c).value
+            length = len(str(val)) if val is not None else 0
+            if length > max_len:
+                max_len = length
+        ws.column_dimensions[letter].width = max(8, int(max_len * 1.2) + 2)
 
 
 class ExcelHandler:
@@ -51,6 +74,7 @@ class ExcelHandler:
             for i, row in enumerate(range(start_row, end_row + 1)):
                 for j, value in enumerate(range(start_col, end_col + 1)):
                     sheet.cell(row=row, column=value, value=results[i][j])
+            _apply_styles(sheet, start_row, start_col, end_row, end_col)
             print("Results have been written!")
             self.wb.save(self.file_name)
         except Exception as e:
@@ -176,6 +200,7 @@ class eExcel:
         for i, row in enumerate(range(start_row, end_row + 1)):
             for j, value in enumerate(range(start_col, end_col + 1)):
                 ws_obj.cell(row=row, column=value, value=results[i][j])
+        _apply_styles(ws_obj, start_row, start_col, end_row, end_col)
 
     def excel_read(self, start_row: int, start_col: int, end_row: int, end_col: int):
         valueA = [
