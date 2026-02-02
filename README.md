@@ -92,109 +92,179 @@ db.run_ai_chatbot(chat_history_size=5, system_msg="System: You are a helpful AI 
 ```
 
 #### 2. Excel 相关类
-用于创建/读取/写入 Excel，以及通过 Excel 应用刷新数据连接。
+提供完整的 Excel 文件创建、读取、写入和操作功能。
 
 ```python
 from pathlib import Path
-from wei_office_simptool import OpenExcel, ExcelHandler, eExcel, ExcelOperation
-
-# 1) 通过 OpenExcel 打开并保存（自动创建不存在文件）
-openfile = str(Path.cwd() / "1.xlsx")
-savefile = str(Path.cwd() / "2.xlsx")
-with OpenExcel(openfile, savefile).my_open() as wb:
-    wb.fast_write('sheet1', [[111, 222], [333, 444]], sr=1, sc=1)
-
-# 2) 使用 ExcelHandler 按区块写入/读取
-eh = ExcelHandler(savefile)
-eh.excel_write('sheet1', [[555]], start_row=3, start_col=3, end_row=3, end_col=3)
-rows = eh.excel_read('sheet1', start_row=1, start_col=1, end_row=3, end_col=3)
-print(rows)
-
-# 3) 列出工作表并按关键词过滤
-sheets = OpenExcel(openfile).file_show(filter=['sheet', '报表'])
-print(sheets)
-
-# 4) 将多工作表拆分为多个文件
-ExcelOperation(input_file=savefile, output_folder=str(Path.cwd() / "out")).split_table()
+from wei_office_simptool import ExcelManager, ExcelHandler, OpenExcel, ExcelOperation, quick_excel
 ```
 
-#### 2.1 eExcel 类
-用于快速创建并写入 Excel（不会依赖 Excel 应用）。
+#### 2.1 ExcelManager 类（推荐使用）
+轻量级 Excel 工作簿管理类，基于 openpyxl，无需安装 Excel 应用。
+
+**特性：**
+- 自动创建不存在的文件
+- 支持多工作表操作
+- 快速读写数据
+- 自动应用样式
+- DataFrame 支持
+
 ```python
-from wei_office_simptool import eExcel
+from wei_office_simptool import ExcelManager
 
-wb = eExcel(file_name=r"D:\Desktop\1.xlsx")
-data = [[1, 2], [3, 4]]
-wb.fast_write(ws="sheet1", results=data, sr=1, sc=1)
-readback = wb.excel_read(start_row=1, start_col=1, end_row=2, end_col=2)
-print(readback)
+# 创建或打开文件
+wb = ExcelManager("data.xlsx")
+
+# 写入数据（自动应用样式）
+wb.write_sheet("Sheet1", [["Name", "Age"], ["Alice", 25]], start_row=1, start_col=1)
+
+# 快速写入（自动计算范围）
+wb.fast_write("Sheet1", [["Bob", 30]], start_row=3, start_col=1)
+
+# 读取数据
+data = wb.read_sheet("Sheet1", 1, 1)
+
+# 使用上下文管理器（自动保存）
+with ExcelManager("data.xlsx") as wb:
+    wb.fast_write("Sheet1", [[1, 2], [3, 4]], 1, 1)
+
+# 保存并关闭
+wb.save()
+wb.close()
 ```
 
-#### 2.2 快速创建与空表写入
-无需手动创建文件或工作表，支持自动创建并写入。
+**DataFrame 支持：**
 ```python
-from wei_office_simptool import eExcel, ExcelHandler
+import pandas as pd
+from wei_office_simptool import ExcelManager
 
-# 使用 eExcel.quick 快速创建（不存在则创建）
-wb = eExcel.quick(file_name=r"D:\Desktop\quick.xlsx", default_sheet="sheet1")
-wb.fast_write(ws="sheet1", results=[[10, 20], [30, 40]], sr=1, sc=1)
+df = pd.DataFrame({"Name": ["Alice", "Bob"], "Age": [25, 30]})
 
-# 使用 ExcelHandler 写入不存在的工作表，自动创建
-eh = ExcelHandler(r"D:\Desktop\quick.xlsx")
-eh.fast_write("new_sheet", [[99]], start_row=1, start_col=1, xl_book=eh)
+# DataFrame 写入 Excel
+with ExcelManager("data.xlsx") as wb:
+    wb.write_dataframe("Sheet1", df)
+
+# Excel 读取为 DataFrame
+with ExcelManager("data.xlsx") as wb:
+    df = wb.read_dataframe("Sheet1")
 ```
 
-#### 2.3 快速范围写入说明
-fast_write 会根据数据自动计算写入范围：
-- 当参数 re=0（默认）时，会根据传入的二维数组自动计算结束行列
-- 当参数 re=1 时，使用显式传入的 er/ec（结束行列）
+**工作表管理：**
 ```python
-# 自动范围计算（re=0）
-wb.fast_write(ws="sheet1", results=[[1, 2], [3, 4]], sr=1, sc=1)
+from wei_office_simptool import ExcelManager
 
-# 显式指定范围（re=1）
-wb.fast_write(ws="sheet1", results=[[1, 2], [3, 4]], sr=1, sc=1, er=10, ec=10, re=1)
+wb = ExcelManager("data.xlsx")
+
+# 创建新工作表
+wb.create_sheet("NewSheet")
+
+# 获取工作表信息
+info = wb.get_sheet_info("Sheet1")
+print(info)
+
+# 复制工作表
+wb.copy_sheet("Sheet1", "Sheet1_Copy")
+
+# 删除工作表
+wb.delete_sheet("OldSheet")
 ```
 
-#### 2.4 工作表筛选
-file_show 支持传入 None、字符串或字符串列表，按关键词过滤工作表名：
+#### 2.2 快速创建与读取
+一行代码完成常用操作：
+
+```python
+from wei_office_simptool import quick_excel, read_excel_quick
+
+# 快速创建并写入数据
+wb = quick_excel("data.xlsx", [["Name", "Age"], ["Alice", 25]])
+
+# 快速读取为列表
+data = read_excel_quick("data.xlsx")
+
+# 快速读取为 DataFrame
+df = read_excel_quick("data.xlsx", as_dataframe=True)
+```
+
+#### 2.3 ExcelHandler 类（兼容版）
+面向已有文件的读取/写入工具，为兼容性保留。
+
+```python
+from wei_office_simptool import ExcelHandler
+
+eh = ExcelHandler("data.xlsx")
+
+# 写入指定范围
+eh.excel_write("Sheet1", [[1, 2], [3, 4]], 1, 1, 2, 2)
+
+# 读取指定范围
+data = eh.excel_read("Sheet1", 1, 1, 2, 2)
+
+# 另存为
+eh.excel_save_as("output.xlsx")
+
+# 关闭
+eh.excel_quit()
+```
+
+#### 2.4 OpenExcel 类（Excel 应用操作）
+通过 Excel 应用打开工作簿，适合需要 RefreshAll 的场景。
+**注意：需要安装 Microsoft Excel**
+
 ```python
 from wei_office_simptool import OpenExcel
-openfile = r"D:\Desktop\quick.xlsx"
 
-# 全部工作表
-print(OpenExcel(openfile).file_show())
+# 使用上下文管理器自动保存
+with OpenExcel("data.xlsx").my_open() as wb:
+    wb.fast_write("Sheet1", [[1, 2], [3, 4]], 1, 1)
 
-# 单关键词
-print(OpenExcel(openfile).file_show(filter="sheet"))
+# 刷新数据连接（需要 Excel 应用）
+with OpenExcel("data.xlsx").open_save_Excel() as appwb:
+    appwb.api.RefreshAll()
 
-# 多关键词
-print(OpenExcel(openfile).file_show(filter=["sheet", "报表"]))
+# 列出工作表并按关键词过滤
+sheets = OpenExcel("data.xlsx").file_show(filter=["sheet", "报表"])
+print(sheets)
 ```
 
-#### 2.5 常见流水线示例
-从创建到写入、刷新连接、拆分保存的一条龙流程：
+#### 2.5 ExcelOperation 类（数据处理）
+提供数据拆分、合并等高级操作。
+
+```python
+from wei_office_simptool import ExcelOperation
+
+# 按工作表拆分为多个文件
+op = ExcelOperation("data.xlsx", "output_folder")
+files = op.split_table()
+
+# 合并多个文件
+op.merge_tables(["file1.xlsx", "file2.xlsx"], "merged.xlsx")
+
+# 转换为 CSV
+csv_path = op.convert_to_csv()
+```
+
+#### 2.6 完整流水线示例
 ```python
 from pathlib import Path
-from wei_office_simptool import eExcel, OpenExcel, ExcelHandler, ExcelOperation
+from wei_office_simptool import ExcelManager, OpenExcel, ExcelOperation
 
 base = Path.cwd()
 f = str(base / "pipeline.xlsx")
 
-# 1) 快速创建并写入
-wb = eExcel.quick(f, default_sheet="sheet1")
-wb.fast_write("sheet1", [[1, 2], [3, 4]], sr=1, sc=1)
+# 1) 创建并写入数据
+with ExcelManager(f) as wb:
+    wb.fast_write("Sheet1", [["Name", "Age"], ["Alice", 25], ["Bob", 30]], 1, 1)
 
-# 2) 使用 ExcelHandler 追加写入（自动创建新工作表）
-eh = ExcelHandler(f)
-eh.fast_write("sheet2", [[5, 6]], start_row=1, start_col=1, xl_book=eh)
-
-# 3) 通过 Excel 应用刷新并保存（需要本机 Excel）
+# 2) 通过 Excel 应用刷新（需要本机 Excel）
 with OpenExcel(f).open_save_Excel() as appwb:
     appwb.api.RefreshAll()
 
-# 4) 拆分工作表到单文件
-ExcelOperation(input_file=f, output_folder=str(base / "out")).split_table()
+# 3) 拆分工作表到单文件
+op = ExcelOperation(f, str(base / "output"))
+op.split_table()
+
+# 4) 转换为 CSV
+csv_file = op.convert_to_csv()
 ```
 
 #### 3. eSend 类
@@ -350,21 +420,54 @@ email_reporter.send_daily_report("HTML Report", html_content, is_html=True)
 email_reporter.send_daily_report("HTML Report", html_content=html_content)
 ```
 
-## 贡献
-###### 💡有任何问题或建议，请提出 issue。欢迎贡献代码！
+## Contributing / 参与贡献
 
-##### Copyright (c) 2026 The Python Packaging Authority
- 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+**English:** We welcome contributions! If you have any questions, suggestions, or improvements, please feel free to:
+- [Submit an Issue](https://github.com/yourusername/wei_office_simptool/issues) - Report bugs or request features
+- [Submit a Pull Request](https://github.com/yourusername/wei_office_simptool/pulls) - Contribute code
+
+**中文:** 我们欢迎并感谢您的贡献！如果您有任何问题、建议或改进，请随时：
+- [提交 Issue](https://github.com/yourusername/wei_office_simptool/issues) - 报告 bug 或提出功能建议
+- [提交 Pull Request](https://github.com/yourusername/wei_office_simptool/pulls) - 贡献代码
+
+---
+
+## License / 许可证
+
+**Copyright © 2026 Ethan Wilkins. All rights reserved.**
+
+**English:** This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+
+**中文:** 本项目采用 [MIT 许可证](https://opensource.org/licenses/MIT) 开源许可。
+
+```
+MIT License
+
+Copyright (c) 2026 Ethan Wilkins
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
->`The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.`
- 
-The software is provided "as is," without any warranty of any kind, either express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and non-infringement. In no event shall the authors or copyright holders be liable for any claims, damages, or other liabilities, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the software or the use or other dealings in the software.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-```本软件以“原样”提供，不附带任何形式的明示或暗示保证，包括但不限于对适销性、特定用途适用性以及不侵权的保证。在任何情况下，作者或版权持有者均不对因使用本软件或与本软件的其他交易相关的任何索赔、损害或其他责任承担责任，无论是合同、侵权或其他原因。```
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
 
-##### 版权和许可
-###### © 2026 Ethan Wilkins
+---
 
-###### 该项目基于 MIT 许可证 分发。
+**免责声明 / Disclaimer:**
+
+**English:** This software is provided "as is", without warranty of any kind, express or implied. The authors or copyright holders shall not be liable for any claims, damages, or other liabilities arising from the use of this software.
+
+**中文:** 本软件按"原样"提供，不附带任何明示或暗示的担保。在任何情况下，作者或版权所有者均不对因使用本软件而产生的任何索赔、损害或其他责任承担责任。
