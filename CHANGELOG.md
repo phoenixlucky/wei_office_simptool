@@ -7,7 +7,7 @@ The format is based on Keep a Changelog and the project follows Semantic Version
 - minor releases may include breaking changes before `1.0.0`
 - patch releases are reserved for backwards-compatible fixes and documentation-only corrections
 
-## [5.1.0] - 2026-03-17
+## [0.6.1] - 2026-03-17
 
 ### Added
 
@@ -16,9 +16,9 @@ The format is based on Keep a Changelog and the project follows Semantic Version
 
 ### Changed
 
-- bumped package version to `5.1.0`
+- bumped package version to `0.6.1`
 
-## [5.0.3] - 2026-03-17
+## [0.5.3] - 2026-03-17
 
 ### Added
 
@@ -32,9 +32,9 @@ The format is based on Keep a Changelog and the project follows Semantic Version
 - switched project license from MIT to GPL-3.0 (SPDX: `GPL-3.0-only`)
 - rewrote and standardized the entire README: enriched usage examples for all 10 domains, added output samples, improved formatting consistency
 - updated project description to bilingual format (Chinese + English)
-- bumped package version to `5.0.3`
+- bumped package version to `0.5.3`
 
-## [5.0.2] - 2026-03-17
+## [0.5.2] - 2026-03-17
 
 ### Added
 
@@ -43,7 +43,7 @@ The format is based on Keep a Changelog and the project follows Semantic Version
 ### Changed
 
 - improved README usage documentation structure for faster onboarding
-- bumped package version to `5.0.2`
+- bumped package version to `0.5.2`
 
 ## [0.5.0] - 2026-03-17
 
