@@ -7,6 +7,22 @@ The format is based on Keep a Changelog and the project follows Semantic Version
 - minor releases may include breaking changes before `1.0.0`
 - patch releases are reserved for backwards-compatible fixes and documentation-only corrections
 
+## [5.0.3] - 2026-03-17
+
+### Added
+
+- added a `LICENSE` file (GPL-3.0) to the project root, matching existing package metadata
+- added GPL-3.0 classifier to `pyproject.toml` and updated all license references in README
+- added table of contents, project badges, and cross-reference tables to README
+- added `MultipleTrendPredictor` usage example and enriched all domain samples
+
+### Changed
+
+- switched project license from MIT to GPL-3.0 (SPDX: `GPL-3.0-only`)
+- rewrote and standardized the entire README: enriched usage examples for all 10 domains, added output samples, improved formatting consistency
+- updated project description to bilingual format (Chinese + English)
+- bumped package version to `5.0.3`
+
 ## [5.0.2] - 2026-03-17
 
 ### Added
