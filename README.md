@@ -1,6 +1,6 @@
 # wei-data-shu 🌟
 
-[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-GPLv3-blue)](./LICENSE)
 [![PyPI](https://img.shields.io/badge/pypi-v0.6.1-green)](https://pypi.org/project/wei-data-shu/)
 [![GitHub stars](https://img.shields.io/badge/⭐-wei--data--shu-blue?logo=github)](https://github.com/phoenixlucky/wei-data-shu)

@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: wei-data-shu
-Version: 5.1.0
+Version: 0.6.1
 Summary: wei-data-shu: 面向办公自动化和数据处理的 Python 工具库 | Domain-oriented office automation & data utility toolkit for Python
 Author-email: Ethan Wilkins <thisluckyboy@126.com>
 License-Expression: GPL-3.0-only
@@ -40,7 +40,7 @@ Dynamic: license-file
 
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-GPLv3-blue)](./LICENSE)
-[![PyPI](https://img.shields.io/badge/pypi-v5.1.0-green)](https://pypi.org/project/wei-data-shu/)
+[![PyPI](https://img.shields.io/badge/pypi-v0.6.1-green)](https://pypi.org/project/wei-data-shu/)
 [![GitHub stars](https://img.shields.io/badge/⭐-wei--data--shu-blue?logo=github)](https://github.com/phoenixlucky/wei-data-shu)
 
 > **🧩 Domain-oriented office automation and data utility toolkit**
