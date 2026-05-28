@@ -12,9 +12,6 @@ updates:
       time: "09:00"
       timezone: "Asia/Shanghai"
     open-pull-requests-limit: 10
-    labels:
-      - "dependencies"
-      - "pip"
     commit-message:
       prefix: "deps"
       include: "scope"
@@ -36,6 +33,3 @@ updates:
       time: "09:00"
       timezone: "Asia/Shanghai"
     open-pull-requests-limit: 5
-    labels:
-      - "dependencies"
-      - "ci"
