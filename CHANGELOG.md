@@ -7,6 +7,17 @@ The format is based on Keep a Changelog and the project follows Semantic Version
 - minor releases may include breaking changes before `1.0.0`
 - patch releases are reserved for backwards-compatible fixes and documentation-only corrections
 
+## [5.1.0] - 2026-03-17
+
+### Added
+
+- added `.github/dependabot.yml` with weekly schedule for pip and GitHub Actions
+- added minimum version constraints to all pip dependencies (`pandas>=2.0`, `openpyxl>=3.1`, etc.)
+
+### Changed
+
+- bumped package version to `5.1.0`
+
 ## [5.0.3] - 2026-03-17
 
 ### Added

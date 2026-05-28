@@ -2,7 +2,7 @@
 
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-GPLv3-blue)](./LICENSE)
-[![PyPI](https://img.shields.io/badge/pypi-v5.0.3-green)](https://pypi.org/project/wei-data-shu/)
+[![PyPI](https://img.shields.io/badge/pypi-v5.1.0-green)](https://pypi.org/project/wei-data-shu/)
 [![GitHub stars](https://img.shields.io/badge/⭐-wei--data--shu-blue?logo=github)](https://github.com/phoenixlucky/wei-data-shu)
 
 > **🧩 Domain-oriented office automation and data utility toolkit**
