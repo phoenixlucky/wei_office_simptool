@@ -37,28 +37,110 @@ pip install "wei-data-shu[excel-client]" # 本机 Excel 应用操作（xlwings�
 
 ## 1. 命令行工具
 
-安装后可直接使用 `wei-data-shu`（或 `python -m wei_data_shu`）：
+安装后可直接使用 `wei-data-shu`，或通过 `python -m wei_data_shu` 调用。
 
 ```bash
-# 查看帮助
-wei-data-shu --help
-
-# 密码生成
-wei-data-shu password --count 10 --length 13
-
-# 日期计算（默认今天，可回退 N 天）
-wei-data-shu date                    # 2026-08-13
-wei-data-shu date --days 1 --format "%Y%m%d"
-
-# 颜色检索（按英文名 / 中文名 / HEX）
-wei-data-shu colors                  # 列出所有颜色
-wei-data-shu colors mint
-wei-data-shu colors 薄荷
-wei-data-shu colors "#5BC49F"
-
-# Excel 工作簿信息（需要 excel extras）
-wei-data-shu excel info report.xlsx  # 列出各工作表行数
+wei-data-shu --help        # 查看所有子命令
+wei-data-shu <命令> --help  # 查看某个子命令的参数
 ```
+
+### 子命令总览
+
+| 子命令 | 作用 | 依赖 |
+| --- | --- | --- |
+| `password` | 生成易读安全密码 | 无 |
+| `colors` | 查看 / 检索颜色（英文名、中文名、HEX） | 无 |
+| `date` | 日期计算（今天 / 回退 N 天） | 无 |
+| `excel info` | 查看 Excel 工作簿各工作表行数 | `[excel]` extras |
+
+> 未安装对应 extras 时，`excel` 子命令会提示安装命令，不影响其他子命令。
+
+### 1.1 password — 密码生成
+
+生成不含易混淆字符（`iIl1o0O`）的安全密码。
+
+```
+usage: wei-data-shu password [-h] [-l LENGTH] [-c COUNT]
+
+  -l, --length LENGTH  Password length (default 13)
+  -c, --count COUNT    Number of passwords to generate (default 1)
+```
+
+```bash
+wei-data-shu password                      # 生成 1 个 13 位密码
+wei-data-shu password --length 16          # 生成 1 个 16 位密码
+wei-data-shu password -l 8 -c 5            # 生成 5 个 8 位密码
+```
+
+退出码：成功为 `0`；`--count` 小于等于 0 时报错。
+
+### 1.2 colors — 颜色检索
+
+内置 39 种常用颜色，支持英文名、中文名、HEX 检索；不带参数列出全部。
+
+```
+usage: wei-data-shu colors [-h] [query]
+
+  query    Search by hex, English name, or Chinese name
+```
+
+```bash
+wei-data-shu colors                  # 列出全部 39 种颜色
+wei-data-shu colors mint              # 按英文名搜索
+wei-data-shu colors 薄荷              # 按中文名搜索
+wei-data-shu colors "#5BC49F"         # 按 HEX 搜索
+```
+
+输出格式（`序号. HEX | 英文名 | 中文名`）：
+
+```text
+ 2. #5BC49F | mint green | 薄荷绿
+ 9. #A8E6CF | ice mint | 冰薄荷
+```
+
+退出码：找到结果为 `0`；无匹配为 `1`。
+
+### 1.3 date — 日期计算
+
+输出相对今天的日期（默认今天），适合报表文件名、定时任务等场景。
+
+```
+usage: wei-data-shu date [-h] [-d DAYS] [-f FORMAT]
+
+  -d, --days DAYS      Days to subtract from today (default 0)
+  -f, --format FORMAT  strftime format (default %Y-%m-%d)
+```
+
+```bash
+wei-data-shu date                          # 2026-08-13（今天）
+wei-data-shu date --days 1                 # 昨天：2026-08-12
+wei-data-shu date -d 7 --format "%Y%m%d"   # 7 天前：20260806
+```
+
+退出码：成功为 `0`。
+
+### 1.4 excel info — 工作簿信息
+
+列出 Excel 工作簿中每个工作表的名字与行数（需要 `[excel]` extras）。
+
+```
+usage: wei-data-shu excel info FILE
+
+  FILE    Path to the .xlsx file
+```
+
+```bash
+wei-data-shu excel info report.xlsx
+```
+
+输出格式（`工作表名<TAB>行数 行`）：
+
+```text
+sheet1	4 行
+销售数据	120 行
+```
+
+退出码：成功为 `0`；缺 extras 或文件无法打开为 `1`。
 
 ---
 
