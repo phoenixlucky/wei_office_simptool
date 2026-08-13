@@ -44,6 +44,7 @@ and zero startup overhead — ready to use out of the box.
 - [用法示例](#用法示例)
   - [使用手册（完整分域示例）](docs/USAGE.md)
 - [参与贡献](#参与贡献)
+- [发布](#发布)
 - [许可证](#许可证)
 
 ---
@@ -285,6 +286,20 @@ print(search_colors("薄荷")[0])                        # 颜色检索
 | 交付 | 分析报告自动生成 | HTML / Word 模板化报告，自动嵌入图表与统计结论 | 中 |
 | 交付 | 图表插入 Excel | 将 matplotlib 图写入 Excel 工作表，打通 analysis 与 excel 领域 | 中 |
 | 工程 | 定时任务调度 | 报表/抓取任务的定时执行配置 | 低 |
+
+---
+
+## 🚢 发布
+
+打 `wei-data-shu-<版本>` 格式的 tag（如 `wei-data-shu-0.7.1`）并推送，CI 会自动构建并发布到 PyPI：
+
+```bash
+git tag wei-data-shu-0.7.1
+git push origin wei-data-shu-0.7.1
+```
+
+> 前提：仓库需配置 `PYPI_TOKEN` secret（见 [release.yml](.github/workflows/release.yml)）。
+> 发布前请先在 `pyproject.toml` 与 [CHANGELOG.md](CHANGELOG.md) 中更新版本号与变更记录。
 
 ---
 

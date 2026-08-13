@@ -3,7 +3,7 @@ name: Publish to PyPI
 on:
   push:
     tags:
-      - "v*"
+      - "wei-data-shu-*"
 
 permissions:
   contents: read
