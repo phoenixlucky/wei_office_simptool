@@ -11,6 +11,7 @@ The format is based on Keep a Changelog and the project follows Semantic Version
 
 ### Added
 
+- 新增 `analysis` 数据分析域：`read_csv/read_json/read_excel/read_any` 通用读取、`DataCleaner` 链式清洗（缺失/重复/异常值、归一化、类别编码）、7 个图表函数（折线/柱状/直方/箱线/散点/饼图/相关热力图）
 - `MySQLDatabase` 支持 `with` 语句上下文管理，退出自动关闭连接
 - 新增异常类型：`MySQLDatabaseError`（数据库操作失败统一抛异常）、`MailError`（邮件发送失败）
 - `py.typed` 标记 + 公共 API 类型注解（text/utils/mail/database 域），恢复 IDE 补全与静态检查
