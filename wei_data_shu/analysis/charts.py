@@ -42,21 +42,21 @@ def setup_chinese_font(preferred: Iterable[str] | None = None) -> str | None:
         return None
     from matplotlib import font_manager
 
-    candidates = list(preferred) if preferred else _CJK_FONT_CANDIDATES
+    candidates = [c for c in (list(preferred) if preferred else _CJK_FONT_CANDIDATES) if c.strip()]
 
     # 1) 精确匹配 fontManager 中的字体名
     registered = {f.name for f in font_manager.fontManager.ttflist}
     matched = next((c for c in candidates if c in registered), None)
-    # 2) 模糊匹配（候选名是某字体名的子串，如 "Noto Sans CJK SC" 的各种变体）
+    # 2) 模糊匹配：返回实际注册的字体名（候选名是某注册名的子串）
     if matched is None:
-        matched = next(
-            (
-                c
-                for c in candidates
-                if any(c.lower() in name.lower() for name in registered)
-            ),
-            None,
-        )
+        for candidate in candidates:
+            hit = next(
+                (name for name in registered if candidate.lower() in name.lower()),
+                None,
+            )
+            if hit:
+                matched = hit
+                break
 
     if matched is None:
         return None
