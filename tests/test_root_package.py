@@ -6,7 +6,7 @@ from wei_data_shu._api import ROOT_EXPORTS
 
 class TestRootPackage(unittest.TestCase):
     def test_root_exports_include_only_domains(self):
-        expected = {"ai", "database", "docs", "excel", "files", "mail", "text", "utils", "__version__"}
+        expected = {"ai", "analysis", "database", "docs", "excel", "files", "mail", "text", "utils", "__version__"}
         self.assertEqual(set(wei_data_shu.__all__), expected)
 
     def test_root_export_map_contains_domain_packages_only(self):

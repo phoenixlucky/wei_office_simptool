@@ -15,6 +15,7 @@ ExportMap = Dict[str, ExportTarget]
 DOMAIN_EXPORTS: dict[str, ExportMap] = {
     "domains": {
         "ai": ("wei_data_shu.ai", None),
+        "analysis": ("wei_data_shu.analysis", None),
         "database": ("wei_data_shu.database", None),
         "docs": ("wei_data_shu.docs", None),
         "excel": ("wei_data_shu.excel", None),

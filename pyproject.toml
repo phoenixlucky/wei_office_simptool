@@ -48,7 +48,8 @@ analysis = [
   "matplotlib",
   "statsmodels",
   "jieba",
-  "wordcloud"
+  "wordcloud",
+  "openpyxl>=3.1"
 ]
 excel-client = [
   "xlwings"
