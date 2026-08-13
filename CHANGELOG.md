@@ -7,6 +7,12 @@ The format is based on Keep a Changelog and the project follows Semantic Version
 - minor releases may include breaking changes before `1.0.0`
 - patch releases are reserved for backwards-compatible fixes and documentation-only corrections
 
+## [Unreleased]
+
+### Added
+
+- `analysis` 域新增 `setup_chinese_font()`：导入时自动检测并配置系统 CJK 中文字体（Windows/macOS/Linux 候选），绘图中文标签开箱即用，无需手动设置 `rcParams`
+
 ## [0.7.0] - 2026-08-13
 
 ### Added
