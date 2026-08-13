@@ -1,7 +1,9 @@
 import io
 import string
+import types
 import unittest
 from contextlib import redirect_stdout
+from unittest.mock import patch
 
 from wei_data_shu.cli import main
 from wei_data_shu.utils import generate_password, search_colors
@@ -38,6 +40,28 @@ class TestUtilsCli(unittest.TestCase):
         lines = [line for line in stdout.getvalue().splitlines() if line]
         self.assertEqual(len(lines), 3)
         self.assertTrue(all(len(line) == 8 for line in lines))
+
+    def test_date_command_prints_formatted_date(self):
+        stdout = io.StringIO()
+        with redirect_stdout(stdout):
+            exit_code = main(["date", "--days", "1", "--format", "%Y-%m-%d"])
+        self.assertEqual(exit_code, 0)
+        self.assertRegex(stdout.getvalue().strip(), r"^\d{4}-\d{2}-\d{2}$")
+
+    def test_excel_info_without_openpyxl_prints_install_hint(self):
+        fake_openpyxl = types.ModuleType("openpyxl")
+
+        def _raise_import_error():
+            raise ImportError("No module named 'openpyxl'")
+
+        fake_openpyxl.load_workbook = lambda *a, **kw: _raise_import_error()
+        stdout = io.StringIO()
+        with redirect_stdout(stdout), patch.dict(
+            "sys.modules", {"openpyxl": fake_openpyxl}
+        ):
+            exit_code = main(["excel", "info", "book.xlsx"])
+        self.assertEqual(exit_code, 1)
+        self.assertIn("wei-data-shu[excel]", stdout.getvalue())
 
 
 if __name__ == "__main__":

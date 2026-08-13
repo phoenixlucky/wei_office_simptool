@@ -7,7 +7,7 @@ import wei_data_shu.mail as mail
 
 class TestMailDomain(unittest.TestCase):
     def test_mail_package_is_importable(self):
-        self.assertEqual(mail.__all__, ["DailyEmailReport"])
+        self.assertEqual(mail.__all__, ["DailyEmailReport", "MailError"])
 
     def test_mail_lazy_import_targets_report_module(self):
         sentinel = object()

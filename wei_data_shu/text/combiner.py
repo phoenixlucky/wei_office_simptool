@@ -4,14 +4,15 @@ from __future__ import annotations
 
 import json
 import re
+from typing import Any
 
 
 class textCombing:
-    def __init__(self, global_var1="重排", global_var2=False):
+    def __init__(self, global_var1: str = "重排", global_var2: bool = False) -> None:
         self.global_var1 = global_var1
         self.global_var2 = global_var2
 
-    def starts_with_symbol_and_number(self, line):
+    def starts_with_symbol_and_number(self, line: str) -> tuple[int | str, str]:
         line = line.replace("\r", "")
         if self.global_var2:
             line = re.sub(r"\*\*|\u00B9|\u00B2|\u00B3|\u2074|\u2075|\u2076|\u2077|\u2078|\u2079", "", line)
@@ -23,7 +24,7 @@ class textCombing:
             return (match.group(2), re.sub(pattern, "NUM", line))
         return (0, line)
 
-    def process_text(self, text):
+    def process_text(self, text: str) -> str:
         processed_text = re.sub(r"\n+", "\n", text)
         processed_text = re.sub(r"^(\d+)(\、|\.|\ 、|\；)?", r"\1、", processed_text, flags=re.MULTILINE)
         processed_text = re.sub(r"^\d+(\、|\.|\ 、)？(\s?)", r"1 \2", processed_text)
@@ -56,11 +57,11 @@ class textCombing:
         adjusted_text = adjusted_text.strip()[:-1] + "。"
         return adjusted_text.strip()
 
-    def remove_leading_spaces(self, text):
+    def remove_leading_spaces(self, text: str) -> str:
         return "\n".join(line.lstrip() for line in text.split("\n"))
 
-    def format_text(self, text):
-        list_char = []
+    def format_text(self, text: str) -> str:
+        list_char: list[str] = []
         lines = [line for line in text.strip().split("\n") if line.strip() != ""]
         counter_character = 1
         output_text = ""

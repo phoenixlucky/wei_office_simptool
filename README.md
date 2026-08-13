@@ -51,9 +51,15 @@
 pip install wei-data-shu
 ```
 
-按需安装可选能力：
+> 核心包仅依赖 `toml` 与 `requests`，开箱即用；重量能力按需安装：
 
 ```bash
+# Excel 读写 / 拆分合并（依赖: pandas, openpyxl）
+pip install "wei-data-shu[excel]"
+
+# MySQL 数据库（依赖: mysql-connector-python）
+pip install "wei-data-shu[database]"
+
 # 文本分析 / 词云 / 趋势预测（依赖: jieba, numpy, matplotlib, statsmodels, wordcloud）
 pip install "wei-data-shu[analysis]"
 
@@ -72,7 +78,7 @@ pip install --upgrade wei-data-shu
 所有公开 API 统一从 `wei_data_shu.<domain>` 导入，根包 `wei_data_shu` 只暴露领域包入口：
 
 ```python
-from wei_data_shu.database import MySQLDatabase
+from wei_data_shu.database import MySQLDatabase, MySQLDatabaseError
 from wei_data_shu.excel import ExcelManager, OpenExcel, ExcelOperation, quick_excel
 from wei_data_shu.files import FileManagement
 from wei_data_shu.mail import DailyEmailReport
@@ -101,6 +107,13 @@ wei-data-shu colors "#5BC49F"      # 按 HEX 搜索
 
 # 密码生成
 wei-data-shu password --count 10 --length 13
+
+# 日期计算（默认今天，可回退 N 天）
+wei-data-shu date                    # 2026-08-13
+wei-data-shu date --days 1 --format "%Y%m%d"
+
+# Excel 工作簿信息（需要 excel extras）
+wei-data-shu excel info report.xlsx  # 列出各工作表行数
 ```
 
 ### 5 分钟上手
@@ -163,7 +176,7 @@ print("临时密码：", temp_password)
 
 | 领域 | 导入路径 | 主要 API | 功能 |
 | --- | --- | --- | --- |
-| 数据库 | `wei_data_shu.database` | `MySQLDatabase` | MySQL 连接、查询、插入、更新、删除、AI 聊天扩展 |
+| 数据库 | `wei_data_shu.database` | `MySQLDatabase`, `MySQLDatabaseError` | MySQL 连接、查询、插入、更新、删除、存储过程 |
 | Excel | `wei_data_shu.excel` | `ExcelManager`, `OpenExcel`, `ExcelOperation`, `quick_excel`, `ExcelHandler` | 读写工作簿、样式、DataFrame、工作表管理、拆分合并、Excel App 操作 |
 | 文件 | `wei_data_shu.files` | `FileManagement` | 查找最新文件夹、复制文件、批量重命名、删除 |
 | 邮件 | `wei_data_shu.mail` | `DailyEmailReport` | SMTP/SSL 发送纯文本/HTML 邮件、附件 |
@@ -182,7 +195,8 @@ wei_data_shu/
 │  ├─ __init__.py           # 根包入口，按需惰性加载各个领域包
 │  ├─ __main__.py           # python -m 入口
 │  ├─ _api.py               # 统一公开 API 注册表
-│  ├─ cli.py                # 命令行接口（colors / password）
+│  ├─ cli.py                # 命令行接口（colors / password / date / excel）
+│  ├─ py.typed              # PEP 561 类型标记（IDE 补全）
 │  ├─ ai/                   # AI 能力（ChatBot, Ollama）
 │  ├─ database/             # 数据库能力（MySQL）
 │  ├─ docs/                 # 文档工作流（Excel + 文件处理的组合）
@@ -206,6 +220,7 @@ wei_data_shu/
 │     ├─ passwords.py       #   generate_password
 │     └─ colors.py          #   mav_colors, search_colors
 ├─ tests/                   # 单元测试
+├─ examples/                # 可运行示例（quickstart / excel / chatbot）
 ├─ docs/plans/              # 架构设计文档
 ├─ pyproject.toml           # 包配置 & 依赖
 ├─ LICENSE                  # GPL-3.0 许可证
@@ -219,7 +234,7 @@ wei_data_shu/
 | **惰性导入** | 每个领域包使用 `__getattr__` 按需加载，避免启动时全量导入 |
 | **统一入口** | 根包只暴露领域包名称，所有公开 API 通过 `wei_data_shu.<domain>.ClassName` 访问 |
 | **结构清晰** | 按领域分包，职责明确；`docs` 包编排跨领域的复合工作流 |
-| **可选依赖** | 文本分析 / Excel App 功能通过 extras 按需安装，核心包轻量 |
+| **可选依赖** | Excel / 数据库 / 文本分析 / Excel App 通过 `[excel]` `[database]` `[analysis]` `[excel-client]` extras 按需安装，核心包仅依赖 `toml`/`requests` |
 
 ---
 
@@ -230,7 +245,7 @@ wei_data_shu/
 #### 基本 CRUD
 
 ```python
-from wei_data_shu.database import MySQLDatabase
+from wei_data_shu.database import MySQLDatabase, MySQLDatabaseError
 
 # 数据库配置
 config = {
@@ -266,26 +281,29 @@ db.execute_query("DELETE FROM users WHERE name = %s", ("Bob",))
 db.close()
 ```
 
-#### AI 对话扩展
+#### 错误处理与上下文管理器
 
-在数据库连接上直接启用在线的 AI 助手，方便自然语言查询数据库：
+所有数据库操作失败都会抛出 `MySQLDatabaseError`（而不是静默打印），请在业务层捕获处理；推荐用 `with` 语句自动关闭连接：
 
 ```python
-from wei_data_shu.database import MySQLDatabase
+from wei_data_shu.database import MySQLDatabase, MySQLDatabaseError, MySQLDatabaseError
 
-cfg = {
+config = {
     "user": "root",
     "password": "your_password",
     "host": "127.0.0.1",
     "port": 3306,
-    "database": "mlcorpus",
+    "database": "your_database",
 }
-db = MySQLDatabase(cfg)
-db.run_ai_chatbot(
-    chat_history_size=5,
-    system_msg="System: You are a helpful AI assistant. 请用中文回答。",
-)
+
+try:
+    with MySQLDatabase(config) as db:
+        results = db.fetch_query("SELECT * FROM users WHERE age > %s", (20,))
+except MySQLDatabaseError as exc:
+    print("数据库操作失败:", exc)
 ```
+
+> 说明：查询失败会抛异常；查询成功但结果为空时返回 `[]`，可放心区分"无数据"与"出错了"。
 
 ---
 

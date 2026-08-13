@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from pathlib import Path
 from typing import Any
 
@@ -17,6 +18,8 @@ try:  # pragma: no cover
     import toml
 except ModuleNotFoundError:  # pragma: no cover
     toml = None
+
+logger = logging.getLogger(__name__)
 
 
 def _load_toml(path: Path) -> dict[str, Any]:
@@ -64,15 +67,15 @@ class ChatBot:
         if self.messages_file.exists():
             data = _load_toml(self.messages_file)
             return data["messages"]
-        print(f"文件 '{self.messages_file}' 不存在，加载默认初始消息。")
+        logger.info("文件 '%s' 不存在，加载默认初始消息。", self.messages_file)
         return [{"role": "system", "content": "你是一个帮助用户的助手。请"}]
 
     def initialize_history_file(self) -> None:
         if not self.history_file.exists():
             _dump_messages(self.history_file, [])
-            print(f"聊天记录文件 '{self.history_file}' 已创建，路径: {self.history_file.resolve()}")
+            logger.info("聊天记录文件 '%s' 已创建，路径: %s", self.history_file, self.history_file.resolve())
             return
-        print(f"聊天记录文件路径: {self.history_file.resolve()}")
+        logger.info("聊天记录文件路径: %s", self.history_file.resolve())
 
     def record_chat_history(self) -> None:
         _dump_messages(self.history_file, self.messages)
@@ -89,13 +92,13 @@ class ChatBot:
                 stream=stream,
             )
             if response_chat.status_code != 200:
-                print("请求失败，状态码:", response_chat.status_code)
+                logger.warning("请求失败，状态码: %s", response_chat.status_code)
                 return None
             if stream:
                 return self.handle_stream_response(response_chat)
             return self.handle_non_stream_response(response_chat)
         except requests.exceptions.RequestException as exc:
-            print("请求过程中发生错误:", exc)
+            logger.error("请求过程中发生错误: %s", exc)
             return None
 
     def handle_stream_response(self, response_chat: requests.Response) -> str:
@@ -122,7 +125,7 @@ class ChatBot:
 
     def start_new_chat(self) -> None:
         self.messages = self.load_initial_messages()
-        print("新聊天会话已开始。")
+        logger.info("新聊天会话已开始。")
 
 
 __all__ = ["ChatBot"]

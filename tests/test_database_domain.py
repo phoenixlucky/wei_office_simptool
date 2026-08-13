@@ -7,7 +7,7 @@ import wei_data_shu.database as database
 
 class TestDatabaseDomain(unittest.TestCase):
     def test_database_package_is_importable(self):
-        self.assertEqual(database.__all__, ["MySQLDatabase"])
+        self.assertEqual(database.__all__, ["MySQLDatabase", "MySQLDatabaseError"])
 
     def test_database_lazy_import_targets_mysql_module(self):
         sentinel = object()

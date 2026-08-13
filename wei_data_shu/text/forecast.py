@@ -1,22 +1,26 @@
 """Forecasting utilities (ARIMA-based trend prediction)."""
 
+from __future__ import annotations
+
+from typing import Any
+
 from ._deps import ARIMA, adfuller, np, pd, require_analysis_deps
 
 
 class TrendPredictor:
     def __init__(
         self,
-        market_trend_df,
-        date_col,
-        smoothed_avg_col,
-        rise_label="上升",
-        fall_label="下滑",
-        flat_label="横盘",
-        freq="B",
-        order=None,
-        steps=7,
-        sortdata="逆序",
-    ):
+        market_trend_df: Any,
+        date_col: str,
+        smoothed_avg_col: str,
+        rise_label: str = "上升",
+        fall_label: str = "下滑",
+        flat_label: str = "横盘",
+        freq: str = "B",
+        order: tuple[int, int, int] | None = None,
+        steps: int = 7,
+        sortdata: str = "逆序",
+    ) -> None:
         require_analysis_deps("numpy", "pandas", "statsmodels")
         self.market_trend_df = market_trend_df.copy()
         self.date_col = date_col
@@ -45,10 +49,10 @@ class TrendPredictor:
         result = adfuller(series.dropna())
         return result[1] <= 0.05
 
-    def original_data(self):
+    def original_data(self) -> Any:
         return self.market_trend_df
 
-    def _highlight_color(self, val):
+    def _highlight_color(self, val: Any) -> str:
         if val == self.rise_label:
             color = "crimson"
         elif val == self.fall_label:
@@ -93,10 +97,10 @@ class TrendPredictor:
 
         return future_forecast_df, forecast, list(map(str, forecast)), future_dates
 
-    def forecast_data(self):
+    def forecast_data(self) -> Any:
         return self._predict()
 
-    def styled_forecast_data(self):
+    def styled_forecast_data(self) -> Any:
         future_forecast_df, forecast, str_forecast, future_dates = self._predict()
         future_forecast_df["预测值"] = future_forecast_df["预测值"].astype(str)
         future_forecast_df = future_forecast_df.set_index(self.date_col).T
@@ -105,7 +109,7 @@ class TrendPredictor:
         )
         return future7_df, forecast, str_forecast, future_dates
 
-    def get_model_info(self):
+    def get_model_info(self) -> dict[str, Any]:
         info = {
             "模型参数": f"ARIMA{self.order}",
             "数据是否平稳": "是" if self.is_stationary else "否",
@@ -115,7 +119,7 @@ class TrendPredictor:
             info.update(self.model_metrics)
         return info
 
-    def cross_validate(self, test_size=0.2):
+    def cross_validate(self, test_size: float = 0.2) -> dict[str, Any]:
         if len(self.reversed_market_trend_df) < 10:
             return {"错误": "数据量不足，无法进行交叉验证"}
 
@@ -140,14 +144,20 @@ class TrendPredictor:
 
 
 class MultipleTrendPredictor:
-    def __init__(self, market_trend_df, freq="B", order=(5, 1, 0), steps=7):
+    def __init__(
+        self,
+        market_trend_df: Any,
+        freq: str = "B",
+        order: tuple[int, int, int] = (5, 1, 0),
+        steps: int = 7,
+    ) -> None:
         require_analysis_deps("pandas", "statsmodels")
         self.market_trend_df = market_trend_df.copy()
         self.freq = freq
         self.order = order
         self.steps = steps
 
-    def predict(self):
+    def predict(self) -> Any:
         self.market_trend_df = self.market_trend_df.sort_index(ascending=True)
 
         def predict_next_days(series, days):

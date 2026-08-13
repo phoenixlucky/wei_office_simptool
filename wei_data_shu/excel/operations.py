@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 from typing import List, Optional, Union
 
 import pandas as pd
+
+logger = logging.getLogger(__name__)
 
 
 class ExcelOperation:
@@ -23,7 +26,7 @@ class ExcelOperation:
 
         for sheet_name in sheets_to_process:
             if sheet_name not in excel_file.sheet_names:
-                print(f"警告: 工作表 '{sheet_name}' 不存在，已跳过")
+                logger.warning("工作表 '%s' 不存在，已跳过", sheet_name)
                 continue
             try:
                 df = pd.read_excel(self.input_file, sheet_name=sheet_name)
@@ -31,7 +34,7 @@ class ExcelOperation:
                 df.to_excel(output_file, index=False, engine="openpyxl")
                 generated_files.append(output_file)
             except Exception as exc:
-                print(f"警告: 拆分工作表 '{sheet_name}' 失败: {exc}")
+                logger.warning("拆分工作表 '%s' 失败: %s", sheet_name, exc)
         return generated_files
 
     def merge_tables(
@@ -44,12 +47,12 @@ class ExcelOperation:
         for file_path in input_files:
             path = Path(file_path)
             if not path.exists():
-                print(f"警告: 文件不存在: {path}")
+                logger.warning("文件不存在: %s", path)
                 continue
             try:
                 all_data.append(pd.read_excel(path))
             except Exception as exc:
-                print(f"警告: 读取文件失败 {path}: {exc}")
+                logger.warning("读取文件失败 %s: %s", path, exc)
 
         if not all_data:
             raise ValueError("没有有效的数据可以合并")

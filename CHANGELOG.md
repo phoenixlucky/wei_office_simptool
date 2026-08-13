@@ -7,6 +7,34 @@ The format is based on Keep a Changelog and the project follows Semantic Version
 - minor releases may include breaking changes before `1.0.0`
 - patch releases are reserved for backwards-compatible fixes and documentation-only corrections
 
+## [0.7.0] - 2026-08-13
+
+### Added
+
+- `MySQLDatabase` 支持 `with` 语句上下文管理，退出自动关闭连接
+- 新增异常类型：`MySQLDatabaseError`（数据库操作失败统一抛异常）、`MailError`（邮件发送失败）
+- `py.typed` 标记 + 公共 API 类型注解（text/utils/mail/database 域），恢复 IDE 补全与静态检查
+- CLI 新增 `date`（日期计算）与 `excel info`（工作簿信息）子命令
+- 新增 `examples/` 目录：`quickstart.py`、`excel_demo.py`、`chatbot_demo.py`
+- 新增 `.github/workflows/release.yml`：打 `v*` tag 自动构建并发布到 PyPI（需配置 `PYPI_TOKEN` secret）
+- 测试从 25 增至 38：数据库错误处理、Excel 真实读写、邮件错误路径、CLI 新子命令
+
+### Changed
+
+- 依赖按领域拆分：核心包仅保留 `toml`/`requests`；`pandas`/`openpyxl` 移入 `[excel]` extras，`mysql-connector-python` 移入 `[database]` extras
+- 数据库/邮件/Excel/文本模块内部 `print` 改为 `logging`，避免污染调用方输出
+- 邮件附件改用 `Path` 拼接 + `MIMEApplication`（UTF-8 文件名），并校验路径与长度
+- CI 安装命令更新为 `pip install -e ".[analysis,excel,database]"`
+
+### Removed
+
+- `MySQLDatabase.run_ai_chatbot`：依赖不可用的 `mysql.ai.genai`（MySQL HeatWave 专有模块），已移除。数据库 AI 能力请改用 `wei_data_shu.ai.ChatBot`
+
+### Migration Notes
+
+- `pip install wei-data-shu` 后，使用 Excel/数据库功能需额外安装 `wei-data-shu[excel]` / `wei-data-shu[database]`
+- 依赖 `MySQLDatabase` 旧行为（失败静默打印）的代码，请改为捕获 `MySQLDatabaseError`
+
 ## [0.6.1] - 2026-03-17
 
 ### Added

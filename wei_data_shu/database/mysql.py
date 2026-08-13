@@ -1,112 +1,145 @@
-"""MySQL database integration."""
+"""MySQL database integration.
+
+所有数据库操作失败时抛出 :class:`MySQLDatabaseError`（而不是静默打印），
+便于调用方在业务层捕获并处理。支持 ``with`` 语句自动关闭连接。
+"""
 
 from __future__ import annotations
 
-from collections import deque
+import logging
+from typing import Any, Iterable, Mapping, Sequence
 
 import mysql.connector
+from mysql.connector import Error as MySQLConnectorError
+
+logger = logging.getLogger(__name__)
+
+
+class MySQLDatabaseError(RuntimeError):
+    """Raised when a MySQL operation fails."""
 
 
 class MySQLDatabase:
-    def __init__(self, config):
+    """A thin, exception-based wrapper around ``mysql.connector``.
+
+    Examples:
+        >>> with MySQLDatabase(config) as db:
+        ...     rows = db.fetch_query("SELECT 1")
+    """
+
+    def __init__(self, config: Mapping[str, Any]) -> None:
         self.config = config
-        self.connection = None
+        self.connection: mysql.connector.MySQLConnection | None = None
         self.connect()
 
-    def connect(self):
+    def __enter__(self) -> "MySQLDatabase":
+        return self
+
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+        self.close()
+
+    def connect(self) -> None:
+        """Establish the connection. Raises :class:`MySQLDatabaseError` on failure."""
         try:
             self.connection = mysql.connector.connect(**self.config)
-            print("Connected to MySQL database")
-        except mysql.connector.Error as err:
-            print(f"Error: {err}")
+        except MySQLConnectorError as err:
+            self.connection = None
+            raise MySQLDatabaseError(f"连接 MySQL 失败: {err}") from err
+        logger.info("Connected to MySQL database")
 
-    def close(self):
-        if self.connection:
-            self.connection.close()
-            print("MySQL connection closed")
+    def close(self) -> None:
+        """Close the connection if open. Safe to call multiple times."""
+        if self.connection is not None:
+            try:
+                self.connection.close()
+            except MySQLConnectorError as err:  # pragma: no cover - defensive
+                raise MySQLDatabaseError(f"关闭 MySQL 连接失败: {err}") from err
+            self.connection = None
+            logger.info("MySQL connection closed")
 
-    def execute_query(self, query, params=None):
-        cursor = self.connection.cursor()
+    def _require_connection(self) -> mysql.connector.MySQLConnection:
+        if self.connection is None:
+            raise MySQLDatabaseError("数据库未连接，请先调用 connect()")
+        return self.connection
+
+    def _cursor(self, dictionary: bool = False):
+        return self._require_connection().cursor(dictionary=dictionary)
+
+    def execute_query(self, query: str, params: Any = None) -> None:
+        """Execute a single query (with optional params) and commit.
+
+        Accepts a list of param rows to run ``executemany``, mirroring the
+        previous behavior.
+        """
+        cursor = self._cursor()
         try:
-            if params:
+            if params is not None:
                 if isinstance(params, list):
                     cursor.executemany(query, params)
                 else:
                     cursor.execute(query, params)
             else:
                 cursor.execute(query)
-            self.connection.commit()
-            print("Query executed successfully")
-        except mysql.connector.Error as err:
-            print(f"Error: {err}")
+            self._require_connection().commit()
+        except MySQLConnectorError as err:
+            raise MySQLDatabaseError(f"执行查询失败: {err}") from err
         finally:
             cursor.close()
 
-    def execute_many(self, query, params_list):
-        cursor = self.connection.cursor()
+    def execute_many(self, query: str, params_list: Sequence[Sequence[Any]]) -> None:
+        """Execute a batch query via ``executemany`` and commit."""
+        cursor = self._cursor()
         try:
             cursor.executemany(query, params_list)
-            self.connection.commit()
-            print("Batch query executed successfully")
-        except mysql.connector.Error as err:
-            print(f"Error: {err}")
+            self._require_connection().commit()
+        except MySQLConnectorError as err:
+            raise MySQLDatabaseError(f"批量执行失败: {err}") from err
         finally:
             cursor.close()
 
-    def fetch_query(self, query, params=None, dictionary=False):
-        cursor = self.connection.cursor(dictionary=dictionary)
+    def fetch_query(
+        self, query: str, params: Any = None, dictionary: bool = False
+    ) -> list[Any]:
+        """Execute a query and return all rows.
+
+        An empty result (no rows) is returned as ``[]``; a failed query raises
+        :class:`MySQLDatabaseError`.
+        """
+        cursor = self._cursor(dictionary=dictionary)
         try:
-            if params:
+            if params is not None:
                 cursor.execute(query, params)
             else:
                 cursor.execute(query)
             return cursor.fetchall()
-        except mysql.connector.Error as err:
-            print(f"Error: {err}")
+        except MySQLConnectorError as err:
+            raise MySQLDatabaseError(f"查询失败: {err}") from err
         finally:
             cursor.close()
 
-    def call_procedure(self, proc_name, params=None):
-        cursor = self.connection.cursor(dictionary=True)
+    def call_procedure(
+        self, proc_name: str, params: Any = None
+    ) -> list[Mapping[str, Any]] | None:
+        """Call a stored procedure and return its result sets (or ``None``)."""
+        cursor = self._cursor(dictionary=True)
         try:
-            if params:
-                cursor.callproc(proc_name, params if isinstance(params, (list, tuple)) else (params,))
+            if params is not None:
+                args: Iterable[Any] = (
+                    params if isinstance(params, (list, tuple)) else (params,)
+                )
+                cursor.callproc(proc_name, args)
             else:
                 cursor.callproc(proc_name)
-            results = []
+            results: list[Mapping[str, Any]] = []
             for result in cursor.stored_results():
                 results.extend(result.fetchall())
-            self.connection.commit()
-            return results if results else None
-        except mysql.connector.Error as err:
-            print(f"存储过程调用错误: {err}")
-            self.connection.rollback()
-            return None
+            self._require_connection().commit()
+            return results or None
+        except MySQLConnectorError as err:
+            self._require_connection().rollback()
+            raise MySQLDatabaseError(f"存储过程调用错误: {err}") from err
         finally:
             cursor.close()
 
-    def run_ai_chatbot(self, chat_history_size=5, system_msg="System: You are a helpful AI assistant."):
-        try:
-            from mysql.ai.genai import MyLLM
-        except Exception as exc:
-            print(f"AI模块加载失败: {exc}")
-            return
-        my_llm = MyLLM(self.connection)
-        chat_history = deque(maxlen=chat_history_size)
-        while True:
-            user_input = input("\nUser: ")
-            if user_input.lower() in ("exit", "quit"):
-                break
-            history = [system_msg] + list(chat_history) + [f"User: {user_input}"]
-            prompt = "\n".join(history)
-            try:
-                response = my_llm.invoke(prompt)
-            except Exception as err:
-                print(f"AI调用错误: {err}")
-                continue
-            print(f"Bot: {response}")
-            chat_history.append(f"User: {user_input}")
-            chat_history.append(f"Bot: {response}")
 
-
-__all__ = ["MySQLDatabase"]
+__all__ = ["MySQLDatabase", "MySQLDatabaseError"]

@@ -1,26 +1,34 @@
 """Text analysis utilities (tokenization and word cloud plotting)."""
 
+from __future__ import annotations
+
 from collections import Counter
+from typing import Any
 
 from ._deps import WordCloud, jieba, np, plt, require_analysis_deps
 
 
 class TextAnalysis:
-    def __init__(self, dataframe):
+    def __init__(self, dataframe: Any) -> None:
         require_analysis_deps("jieba", "numpy", "matplotlib", "wordcloud", "pandas")
         self.df = dataframe
 
-    def get_word_freq(self, group_col, text_col, agg_func):
+    def get_word_freq(self, group_col: str, text_col: str, agg_func: Any) -> Any:
         aggregated_text = self.df.groupby(group_col)[text_col].apply(agg_func).reset_index()
         aggregated_text["word_freq"] = aggregated_text[text_col].apply(self.compute_word_freq)
         return aggregated_text
 
-    def compute_word_freq(self, text):
+    def compute_word_freq(self, text: str) -> Counter[str]:
         words = jieba.cut(text)
         return Counter(words)
 
-    def plot_wordclouds(self, word_freqs, titles, save_path="wordclouds.png"):
-        def create_ellipse_mask(width, height):
+    def plot_wordclouds(
+        self,
+        word_freqs: list[Any],
+        titles: list[str],
+        save_path: str = "wordclouds.png",
+    ) -> None:
+        def create_ellipse_mask(width: int, height: int) -> Any:
             y, x = np.ogrid[-height // 2 : height // 2, -width // 2 : width // 2]
             mask = (x**2 / (width // 2) ** 2 + y**2 / (height // 2) ** 2) <= 1
             return 255 * mask.astype(int)

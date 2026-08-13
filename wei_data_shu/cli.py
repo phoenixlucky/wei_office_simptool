@@ -26,6 +26,15 @@ def _build_parser() -> argparse.ArgumentParser:
     colors_parser = subparsers.add_parser("colors", help="View or search color palette")
     colors_parser.add_argument("query", nargs="?", help="Search by hex, English name, or Chinese name")
 
+    date_parser = subparsers.add_parser("date", help="Print a date offset by N days from today")
+    date_parser.add_argument("-d", "--days", type=int, default=0, help="Days to subtract from today (default 0)")
+    date_parser.add_argument("-f", "--format", default="%Y-%m-%d", help="strftime format (default %%Y-%%m-%%d)")
+
+    excel_parser = subparsers.add_parser("excel", help="Inspect an Excel workbook")
+    excel_sub = excel_parser.add_subparsers(dest="excel_command", required=True)
+    info_parser = excel_sub.add_parser("info", help="List sheets and row counts of a workbook")
+    info_parser.add_argument("file", help="Path to the .xlsx file")
+
     return parser
 
 
@@ -52,6 +61,31 @@ def _run_colors(args: argparse.Namespace) -> int:
     return 0
 
 
+def _run_date(args: argparse.Namespace) -> int:
+    from wei_data_shu.text import DateFormat
+
+    print(DateFormat(interval_day=args.days, timeclass="date").get_timeparameter(Format=args.format))
+    return 0
+
+
+def _run_excel(args: argparse.Namespace) -> int:
+    if args.excel_command != "info":
+        return 1
+    try:
+        from openpyxl import load_workbook
+
+        workbook = load_workbook(args.file, read_only=True, data_only=True)
+        try:
+            for sheet_name in workbook.sheetnames:
+                print(f"{sheet_name}\t{workbook[sheet_name].max_row} 行")
+        finally:
+            workbook.close()
+    except ImportError:
+        print("缺少 excel 依赖，请先安装: pip install 'wei-data-shu[excel]'")
+        return 1
+    return 0
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     _ensure_utf8_stdout()
     parser = _build_parser()
@@ -61,6 +95,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         return _run_password(args)
     if args.command == "colors":
         return _run_colors(args)
+    if args.command == "date":
+        return _run_date(args)
+    if args.command == "excel":
+        return _run_excel(args)
 
     parser.print_help()
     return 0
