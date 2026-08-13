@@ -7,11 +7,16 @@ The format is based on Keep a Changelog and the project follows Semantic Version
 - minor releases may include breaking changes before `1.0.0`
 - patch releases are reserved for backwards-compatible fixes and documentation-only corrections
 
-## [Unreleased]
+## [0.7.1] - 2026-08-13
 
 ### Added
 
 - `analysis` 域新增 `setup_chinese_font()`：导入时自动检测并配置系统 CJK 中文字体（Windows/macOS/Linux 候选），绘图中文标签开箱即用，无需手动设置 `rcParams`
+
+### Changed
+
+- README 增加中英文双语介绍，用法示例抽离为独立使用手册 `docs/USAGE.md`（含完整 CLI 用法介绍）
+- release.yml 触发模式修正为 `wei-data-shu-*`（与实际 tag 命名一致），README 补充发布流程说明
 
 ## [0.7.0] - 2026-08-13
 
