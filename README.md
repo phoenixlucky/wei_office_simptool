@@ -1,19 +1,34 @@
-# wei-data-shu 🌟
+<div align="center">
 
-[![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue)](https://www.python.org/)
-[![License](https://img.shields.io/badge/license-GPLv3-blue)](./LICENSE)
-[![PyPI](https://img.shields.io/badge/pypi-v0.6.1-green)](https://pypi.org/project/wei-data-shu/)
-[![GitHub stars](https://img.shields.io/badge/⭐-wei--data--shu-blue?logo=github)](https://github.com/phoenixlucky/wei-data-shu)
+# wei-data-shu 🧩
 
-> **🧩 Domain-oriented office automation and data utility toolkit**
-> **🧩 面向办公自动化和数据处理的 Python 一站式工具库**
->
-> 覆盖 **数据库(MySQL) · Excel · 文件处理 · 文本分析(AI词云) · 邮件发送 · AI对话(Ollama) · 通用工具** 七大领域。
-> 领域化分包设计，惰性导入零开销，开箱即用。
+**面向办公自动化与数据处理的 Python 一站式工具库**
+**Domain-Oriented Office Automation & Data Utility Toolkit for Python**
+
+[![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue?logo=python&logoColor=white)](https://www.python.org/)
+[![PyPI version](https://img.shields.io/pypi/v/wei-data-shu?color=blue)](https://pypi.org/project/wei-data-shu/)
+[![License](https://img.shields.io/badge/License-GPLv3-blue.svg)](./LICENSE)
+[![Development Status](https://img.shields.io/badge/status-beta-yellow)](https://pypi.org/project/wei-data-shu/)
+[![GitHub stars](https://img.shields.io/github/stars/phoenixlucky/wei-data-shu?logo=github)](https://github.com/phoenixlucky/wei-data-shu)
 
 ---
 
-## 目录
+覆盖 **数据库 · Excel · 文件 · 文本分析 · 邮件 · AI 对话 · 通用工具** 七大领域，
+领域化分包设计，惰性导入零开销，开箱即用。
+
+</div>
+
+---
+
+## ✨ 特性
+
+- **七大领域一站覆盖** — MySQL 数据库、Excel 电子表格、文件管理、文本分析（词频/词云/趋势预测）、邮件发送、Ollama AI 对话、通用工具
+- **领域化分包设计** — 每个领域一个包，根包仅暴露入口，结构清晰、职责单一
+- **惰性导入零开销** — 各领域包按需懒加载，`import wei_data_shu` 不拖慢启动
+- **开箱即用** — 统一 `wei_data_shu.<domain>` 导入约定，配合完整示例，5 分钟上手
+- **可选依赖按需安装** — 文本分析、Excel App 等重量能力通过 `extras` 安装，核心包轻量
+
+## 📖 目录
 
 - [快速开始](#快速开始)
   - [安装](#安装)
@@ -23,22 +38,12 @@
 - [功能概览](#功能概览)
 - [项目结构](#项目结构)
 - [用法示例](#用法示例)
-  - [1. MySQLDatabase（数据库）](#1-mysqldatabase数据库)
-  - [2. Excel（电子表格）](#2-excel电子表格)
-  - [3. DailyEmailReport（邮件）](#3-dailyemailreport邮件)
-  - [4. DateFormat（日期处理）](#4-dateformat日期处理)
-  - [5. StringBaba（字符串处理）](#5-stringbaba字符串处理)
-  - [6. TextAnalysis（文本分析）](#6-textanalysis文本分析)
-  - [7. TrendPredictor（趋势预测）](#7-trendpredictor趋势预测)
-  - [8. FileManagement（文件管理）](#8-filemanagement文件管理)
-  - [9. ChatBot（AI 对话）](#9-chatbotai-对话)
-  - [10. Utils（通用工具）](#10-utils通用工具)
 - [参与贡献](#参与贡献)
 - [许可证](#许可证)
 
 ---
 
-## 快速开始
+## 🚀 快速开始
 
 ### 安装
 
@@ -154,7 +159,7 @@ print("临时密码：", temp_password)
 
 ---
 
-## 功能概览
+## 🧭 功能概览
 
 | 领域 | 导入路径 | 主要 API | 功能 |
 | --- | --- | --- | --- |
@@ -169,7 +174,7 @@ print("临时密码：", temp_password)
 
 ---
 
-## 项目结构
+## 🗂 项目结构
 
 ```text
 wei_data_shu/
@@ -207,16 +212,18 @@ wei_data_shu/
 └─ README.md                # 本文件
 ```
 
-设计原则：
+### 设计原则
 
-- **惰性导入**：每个领域包使用 `__getattr__` 按需加载，避免启动时全量导入
-- **统一入口**：根包只暴露领域包名称，所有公开 API 通过 `wei_data_shu.<domain>.ClassName` 访问
-- **结构清晰**：按领域分包，职责明确；`docs` 包编排跨领域的复合工作流
-- **可选依赖**：文本分析 / Excel App 功能通过 extras 按需安装，核心包轻量
+| 原则 | 说明 |
+| --- | --- |
+| **惰性导入** | 每个领域包使用 `__getattr__` 按需加载，避免启动时全量导入 |
+| **统一入口** | 根包只暴露领域包名称，所有公开 API 通过 `wei_data_shu.<domain>.ClassName` 访问 |
+| **结构清晰** | 按领域分包，职责明确；`docs` 包编排跨领域的复合工作流 |
+| **可选依赖** | 文本分析 / Excel App 功能通过 extras 按需安装，核心包轻量 |
 
 ---
 
-## 用法示例
+## 💻 用法示例
 
 ### 1. MySQLDatabase（数据库）
 
@@ -828,7 +835,7 @@ wei-data-shu colors "#5BC49F"
 
 ---
 
-## 参与贡献
+## 🤝 参与贡献
 
 **English:** We welcome contributions! If you have any questions, suggestions, or improvements, please feel free to:
 
@@ -842,7 +849,7 @@ wei-data-shu colors "#5BC49F"
 
 ---
 
-## 许可证
+## 📄 许可证
 
 **Copyright © 2026 Ethan Wilkins.**
 
