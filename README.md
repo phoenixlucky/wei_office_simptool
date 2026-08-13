@@ -16,6 +16,10 @@
 覆盖 **数据库 · Excel · 文件 · 文本分析 · 数据分析 · 邮件 · AI 对话 · 通用工具** 八大领域，
 领域化分包设计，惰性导入零开销，开箱即用。
 
+Covers **eight domains**: database (MySQL), Excel, files, text analytics, data analysis,
+email, AI chat (Ollama) and general utilities. Domain-oriented packages with lazy imports
+and zero startup overhead — ready to use out of the box.
+
 </div>
 
 ---
