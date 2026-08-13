@@ -13,7 +13,7 @@
 
 ---
 
-覆盖 **数据库 · Excel · 文件 · 文本分析 · 邮件 · AI 对话 · 通用工具** 七大领域，
+覆盖 **数据库 · Excel · 文件 · 文本分析 · 数据分析 · 邮件 · AI 对话 · 通用工具** 八大领域，
 领域化分包设计，惰性导入零开销，开箱即用。
 
 </div>
@@ -22,7 +22,7 @@
 
 ## ✨ 特性
 
-- **七大领域一站覆盖** — MySQL 数据库、Excel 电子表格、文件管理、文本分析（词频/词云/趋势预测）、邮件发送、Ollama AI 对话、通用工具
+- **八大领域一站覆盖** — MySQL 数据库、Excel 电子表格、文件管理、文本分析（词频/词云/趋势预测）、数据分析（通用读取/清洗/可视化）、邮件发送、Ollama AI 对话、通用工具
 - **领域化分包设计** — 每个领域一个包，根包仅暴露入口，结构清晰、职责单一
 - **惰性导入零开销** — 各领域包按需懒加载，`import wei_data_shu` 不拖慢启动
 - **开箱即用** — 统一 `wei_data_shu.<domain>` 导入约定，配合完整示例，5 分钟上手
@@ -38,6 +38,16 @@
 - [功能概览](#功能概览)
 - [项目结构](#项目结构)
 - [用法示例](#用法示例)
+  - [1. MySQLDatabase（数据库）](#1-mysqldatabase数据库)
+  - [2. Excel（电子表格）](#2-excel电子表格)
+  - [3. DailyEmailReport（邮件）](#3-dailyemailreport邮件)
+  - [4. DateFormat（日期处理）](#4-dateformat日期处理)
+  - [5. StringBaba（字符串处理）](#5-stringbaba字符串处理)
+  - [6. TextAnalysis（文本分析）](#6-textanalysis文本分析)
+  - [7. TrendPredictor（趋势预测）](#7-trendpredictor趋势预测)
+  - [8. FileManagement（文件管理）](#8-filemanagement文件管理)
+  - [9. ChatBot（AI 对话）](#9-chatbotai-对话)
+  - [10. Utils（通用工具）](#10-utils通用工具)
 - [参与贡献](#参与贡献)
 - [许可证](#许可证)
 
@@ -60,7 +70,7 @@ pip install "wei-data-shu[excel]"
 # MySQL 数据库（依赖: mysql-connector-python）
 pip install "wei-data-shu[database]"
 
-# 文本分析 / 词云 / 趋势预测（依赖: jieba, numpy, matplotlib, statsmodels, wordcloud）
+# 文本分析 / 词云 / 趋势预测 / 数据分析（依赖: jieba, numpy, matplotlib, statsmodels, wordcloud, pandas, openpyxl）
 pip install "wei-data-shu[analysis]"
 
 # 需要通过本机 Excel 应用操作工作簿（依赖: xlwings + Microsoft Excel）
@@ -83,6 +93,7 @@ from wei_data_shu.excel import ExcelManager, OpenExcel, ExcelOperation, quick_ex
 from wei_data_shu.files import FileManagement
 from wei_data_shu.mail import DailyEmailReport
 from wei_data_shu.text import DateFormat, StringBaba, TextAnalysis, TrendPredictor
+from wei_data_shu.analysis import DataCleaner, read_csv, plot_line, plot_corr_heatmap
 from wei_data_shu.ai import ChatBot
 from wei_data_shu.utils import fn_timer, generate_password, search_colors
 ```
@@ -181,6 +192,7 @@ print("临时密码：", temp_password)
 | 文件 | `wei_data_shu.files` | `FileManagement` | 查找最新文件夹、复制文件、批量重命名、删除 |
 | 邮件 | `wei_data_shu.mail` | `DailyEmailReport` | SMTP/SSL 发送纯文本/HTML 邮件、附件 |
 | 文本 | `wei_data_shu.text` | `DateFormat`, `StringBaba`, `TextAnalysis`, `TrendPredictor`, `MultipleTrendPredictor`, `textCombing` | 日期格式化、字符串清洗、词频分析、词云、ARIMA 趋势预测、段落重组 |
+| 数据分析 | `wei_data_shu.analysis` | `read_csv`, `read_json`, `read_excel`, `read_any`, `DataCleaner`, `plot_line`, `plot_bar`, `plot_hist`, `plot_box`, `plot_scatter`, `plot_pie`, `plot_corr_heatmap` | 通用数据读取、缺失值/重复值/异常值处理、归一化、类别编码、常用图表绘制、相关热力图 |
 | AI | `wei_data_shu.ai` | `ChatBot` | 对接 Ollama API，支持流式/非流式对话、聊天记录持久化 |
 | 工具 | `wei_data_shu.utils` | `fn_timer`, `generate_password`, `search_colors`, `mav_colors` | 函数计时器、安全密码生成、颜色检索 |
 | 文档 | `wei_data_shu.docs` | `FileManagement`, `ExcelHandler`, `OpenExcel`, `ExcelOperation` | 文档工作流（Excel + 文件操作的组合编排） |
@@ -198,6 +210,11 @@ wei_data_shu/
 │  ├─ cli.py                # 命令行接口（colors / password / date / excel）
 │  ├─ py.typed              # PEP 561 类型标记（IDE 补全）
 │  ├─ ai/                   # AI 能力（ChatBot, Ollama）
+│  ├─ analysis/             # 数据分析
+│  │  ├─ io.py              #   通用数据读取（CSV/JSON/Excel, read_any）
+│  │  ├─ cleaning.py        #   DataCleaner（缺失/重复/异常值, 归一化, 编码）
+│  │  ├─ charts.py          #   可视化（折线/柱状/直方/箱线/散点/饼图/热力图）
+│  │  └─ _deps.py           #   可选依赖守卫
 │  ├─ database/             # 数据库能力（MySQL）
 │  ├─ docs/                 # 文档工作流（Excel + 文件处理的组合）
 │  ├─ excel/                # Excel 能力
@@ -850,6 +867,97 @@ wei-data-shu colors "#5BC49F"
 ```text
  2. #5BC49F | mint green | 薄荷绿
 ```
+
+---
+
+### 11. 数据分析（analysis）
+
+需要安装可选依赖：`pip install wei-data-shu[analysis]`
+
+#### 11.1 通用数据读取
+
+```python
+from wei_data_shu.analysis import read_csv, read_excel, read_any
+
+df_csv = read_csv("sales.csv")            # CSV / TSV / TXT
+df_xls = read_excel("sales.xlsx", sheet_name="6月")  # Excel 指定工作表
+df_any = read_any("data.json")            # 按扩展名自动分发（csv/json/xlsx）
+```
+
+#### 11.2 DataCleaner — 链式数据清洗
+
+```python
+import pandas as pd
+from wei_data_shu.analysis import DataCleaner
+
+df = pd.DataFrame({
+    "城市": ["北京", "上海", "北京", "深圳", None],
+    "销售额": [100.0, 200.0, None, 300.0, 50.0],
+    "成本":   [60.0, 120.0, 90.0, 180.0, 30.0],
+})
+
+cleaned = (
+    DataCleaner(df)
+    .drop_missing(subset=["城市"])            # 删除关键列缺失的行
+    .fill_missing(strategy="median")          # 数值列按中位数填充
+    .remove_duplicates()                      # 去重
+    .clip_outliers(cols=["销售额"])           # 异常值缩尾（IQR 规则）
+    .normalize(cols=["销售额", "成本"])       # min-max 归一化到 [0,1]
+    .encode_categorical(cols=["城市"], method="onehot")  # 独热编码
+    .get()
+)
+
+print(cleaned)
+```
+
+其他常用方法：`missing_summary()`（缺失统计）、`detect_outliers(method="iqr"/"zscore")`（异常值掩码）、`remove_outliers()`、`interpolate_missing()`、`to_datetime()` / `to_numeric()` / `infer_types()`。
+
+#### 11.3 快速可视化
+
+```python
+from wei_data_shu.analysis import (
+    plot_line, plot_bar, plot_hist, plot_box,
+    plot_scatter, plot_pie, plot_corr_heatmap,
+)
+
+plot_line(df, x="日期", y="销售额", save_path="line.png")        # 折线
+plot_bar(df, x="城市", y="销售额", save_path="bar.png")          # 柱状
+plot_hist(df, col="销售额", bins=30, save_path="hist.png")       # 直方图
+plot_box(df, cols=["销售额", "成本"], save_path="box.png")       # 箱线图
+plot_scatter(df, x="销售额", y="成本", save_path="scatter.png")  # 散点
+plot_pie(df, col="城市", save_path="pie.png")                    # 饼图
+plot_corr_heatmap(df, method="pearson", save_path="corr.png")    # 相关热力图
+```
+
+所有绘图函数返回 `matplotlib.figure.Figure`，传 `save_path` 保存到文件，传 `show=True` 交互显示。中文标签需先配置中文字体：
+
+```python
+import matplotlib
+matplotlib.rcParams["font.sans-serif"] = ["SimHei"]
+matplotlib.rcParams["axes.unicode_minus"] = False
+```
+
+---
+
+## 🗺 Roadmap（计划表）
+
+以下功能已列入规划、尚未实现，欢迎贡献：
+
+| 类别 | 功能 | 说明 | 优先级 |
+| --- | --- | --- | --- |
+| 数据接入 | SQLite / PostgreSQL 支持 | 数据库层目前仅 MySQL，计划扩展本地零配置的 SQLite 与常用 PostgreSQL | 中 |
+| 数据接入 | HTTP/API 数据抓取封装 | 将 `requests` 封装为"拉取 → 解析 → DataFrame"的一站式接口 | 中 |
+| 数据接入 | 数据导出封装 | 一键导出 DataFrame 到 CSV / JSON / Excel（多工作表） | 低 |
+| 统计分析 | 描述性统计汇总 | 一键输出均值/分位数/偏度/峰度/缺失比例 | 高 |
+| 统计分析 | 相关性分析 API | 独立的 Pearson / Spearman / Kendall 相关系数与显著性 | 高 |
+| 统计分析 | 假设检验 | t 检验、卡方检验、ANOVA | 中 |
+| 统计分析 | 透视表 / 抽样封装 | pivot table、随机抽样、分层抽样 | 中 |
+| 建模 | 回归与分类 | 线性回归、逻辑回归封装 | 中 |
+| 建模 | 聚类与降维 | KMeans、PCA | 中 |
+| 建模 | 通用模型评估 | 分类/回归指标一键计算与交叉验证 | 低 |
+| 交付 | 分析报告自动生成 | HTML / Word 模板化报告，自动嵌入图表与统计结论 | 中 |
+| 交付 | 图表插入 Excel | 将 matplotlib 图写入 Excel 工作表，打通 analysis 与 excel 领域 | 中 |
+| 工程 | 定时任务调度 | 报表/抓取任务的定时执行配置 | 低 |
 
 ---
 
