@@ -3,11 +3,9 @@
 Every function returns a ``matplotlib.figure.Figure``. Pass ``save_path`` to
 write the figure to disk, or ``show=True`` to display it interactively.
 
-.. note:: 中文标签需要先配置中文字体, 例如::
-
-    import matplotlib
-    matplotlib.rcParams["font.sans-serif"] = ["SimHei"]
-    matplotlib.rcParams["axes.unicode_minus"] = False
+导入本模块时会自动检测并配置系统中已安装的中文字体（SimHei / Microsoft YaHei /
+PingFang SC / Noto Sans CJK 等），中文标签默认即可正常显示；未找到中文字体时
+自动降级为 matplotlib 默认字体。也可调用 :func:`setup_chinese_font` 手动配置。
 """
 
 from __future__ import annotations
@@ -17,6 +15,61 @@ from typing import Any, Iterable
 from ._deps import np, pd, plt, require_deps
 
 _DEFAULT_FIGSIZE = (10, 5)
+
+# fmt: off
+_CJK_FONT_CANDIDATES = [
+    # Windows
+    "Microsoft YaHei", "SimHei", "SimSun", "KaiTi", "DengXian", "Microsoft JhengHei",
+    # macOS
+    "PingFang SC", "Hiragino Sans GB", "STHeiti", "Arial Unicode MS",
+    # Linux
+    "Noto Sans CJK SC", "Source Han Sans CN", "WenQuanYi Zen Hei", "WenQuanYi Micro Hei",
+]
+# fmt: on
+
+
+def setup_chinese_font(preferred: Iterable[str] | None = None) -> str | None:
+    """自动检测并配置 matplotlib 中文字体，返回命中的字体名（未找到返回 ``None``）。
+
+    命中后将字体加入 ``font.sans-serif`` 首位（保留原字体作为兜底），并关闭
+    ``axes.unicode_minus``（避免负号显示为方块）。可通过 ``preferred`` 自定义候选字体。
+
+    Examples:
+        >>> setup_chinese_font()                     # 自动检测
+        >>> setup_chinese_font(["Noto Sans CJK SC"]) # 指定候选
+    """
+    if plt is None:
+        return None
+    from matplotlib import font_manager
+
+    candidates = list(preferred) if preferred else _CJK_FONT_CANDIDATES
+
+    # 1) 精确匹配 fontManager 中的字体名
+    registered = {f.name for f in font_manager.fontManager.ttflist}
+    matched = next((c for c in candidates if c in registered), None)
+    # 2) 模糊匹配（候选名是某字体名的子串，如 "Noto Sans CJK SC" 的各种变体）
+    if matched is None:
+        matched = next(
+            (
+                c
+                for c in candidates
+                if any(c.lower() in name.lower() for name in registered)
+            ),
+            None,
+        )
+
+    if matched is None:
+        return None
+
+    existing = list(plt.rcParams.get("font.sans-serif", []))
+    sans = [matched] + [f for f in existing if f != matched]
+    plt.rcParams["font.sans-serif"] = sans
+    plt.rcParams["axes.unicode_minus"] = False
+    return matched
+
+
+# 模块加载时自动配置一次（matplotlib 未安装时静默跳过）
+_AUTO_CJK_FONT = setup_chinese_font()
 
 
 def _require_and_finalize(fig: Any, save_path: str | None, show: bool) -> Any:
@@ -199,6 +252,7 @@ def plot_corr_heatmap(
 
 
 __all__ = [
+    "setup_chinese_font",
     "plot_line",
     "plot_bar",
     "plot_hist",

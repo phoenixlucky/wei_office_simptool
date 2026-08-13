@@ -15,6 +15,7 @@ __all__ = [
     "plot_scatter",
     "plot_pie",
     "plot_corr_heatmap",
+    "setup_chinese_font",
 ]
 
 _EXPORTS = {
@@ -30,6 +31,7 @@ _EXPORTS = {
     "plot_scatter": ("wei_data_shu.analysis.charts", "plot_scatter"),
     "plot_pie": ("wei_data_shu.analysis.charts", "plot_pie"),
     "plot_corr_heatmap": ("wei_data_shu.analysis.charts", "plot_corr_heatmap"),
+    "setup_chinese_font": ("wei_data_shu.analysis.charts", "setup_chinese_font"),
 }
 
 

@@ -852,12 +852,18 @@ plot_pie(df, col="城市", save_path="pie.png")                    # 饼图
 plot_corr_heatmap(df, method="pearson", save_path="corr.png")    # 相关热力图
 ```
 
-所有绘图函数返回 `matplotlib.figure.Figure`，传 `save_path` 保存到文件，传 `show=True` 交互显示。中文标签需先配置中文字体：
+所有绘图函数返回 `matplotlib.figure.Figure`，传 `save_path` 保存到文件，传 `show=True` 交互显示。
+
+**中文字体已自动配置**：导入 `wei_data_shu.analysis`（或任意 `plot_*` 函数）时会自动检测并启用系统已安装的中文字体（Windows: Microsoft YaHei / SimHei；macOS: PingFang SC；Linux: Noto Sans CJK 等），中文标签直接可用，无需手动设置。若系统中没有中文字体，则自动降级为默认字体（中文可能显示为方块）。
+
+需要自定义字体时，可手动调用：
 
 ```python
-import matplotlib
-matplotlib.rcParams["font.sans-serif"] = ["SimHei"]
-matplotlib.rcParams["axes.unicode_minus"] = False
+from wei_data_shu.analysis import setup_chinese_font
+
+setup_chinese_font()                          # 自动检测
+setup_chinese_font(["Noto Sans CJK SC"])      # 指定候选字体
+setup_chinese_font(["SimHei"])                # 返回命中的字体名，未找到返回 None
 ```
 
 ---
@@ -867,5 +873,5 @@ matplotlib.rcParams["axes.unicode_minus"] = False
 - **`import wei_data_shu.excel` 报错**：未安装 excel extras，执行 `pip install "wei-data-shu[excel]"`
 - **`import wei_data_shu.database` 报错**：未安装 database extras，执行 `pip install "wei-data-shu[database]"`
 - **`TextAnalysis` / `TrendPredictor` 报缺少依赖**：执行 `pip install "wei-data-shu[analysis]"`
-- **图表中文显示为方块**：按上方「快速可视化」小节配置中文字体（`SimHei` 等）
+- **图表中文显示为方块**：说明系统中没有可用的中文字体，请安装中文字体（Windows 自带微软雅黑/黑体；Linux 可装 `fonts-noto-cjk`）后调用 `setup_chinese_font()`，或手动指定字体
 - **数据库操作失败没有报错**：0.7.0 起失败统一抛 `MySQLDatabaseError`，请捕获该异常而非依赖打印

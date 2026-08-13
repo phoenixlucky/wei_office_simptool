@@ -29,6 +29,7 @@ from wei_data_shu.analysis import (  # noqa: E402
     read_csv,
     read_excel,
     read_json,
+    setup_chinese_font,
 )
 
 
@@ -211,6 +212,21 @@ class TestCharts(unittest.TestCase):
         self.tmpdir = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmpdir.cleanup)
         self.df = _sample_df()
+
+    def test_setup_chinese_font_returns_name_or_none(self):
+        result = setup_chinese_font()
+        self.assertIsInstance(result, (str, type(None)))
+        if result is not None:
+            self.assertIs(matplotlib.rcParams["axes.unicode_minus"], False)
+
+    def test_setup_chinese_font_preferred_priority(self):
+        # 指定不存在的字体应返回 None 且不抛错
+        self.assertIsNone(setup_chinese_font(["No Such Font ABC"]))
+        # 指定存在的字体应命中
+        matched = setup_chinese_font(["Microsoft YaHei", "SimHei"])
+        if matched is not None:
+            self.assertEqual(matched, "Microsoft YaHei")
+            self.assertIn("Microsoft YaHei", matplotlib.rcParams["font.sans-serif"][0])
 
     def _png_path(self, name):
         return os.path.join(self.tmpdir.name, name)
