@@ -9,6 +9,13 @@ The format is based on Keep a Changelog and the project follows Semantic Version
 
 ## [Unreleased]
 
+## [0.7.2] - 2026-09-04
+
+### Added
+
+- Excel 支持 `.xlsm/.xltm` 文件的 VBA 保留、宏调用，以及当前会话内启用/禁用宏的快捷操作
+- README 与使用手册补充 Excel 宏操作示例
+
 ### Fixed
 
 - `setup_chinese_font` 模糊匹配时返回实际注册的字体名（而非候选名），并过滤空候选，避免 rcParams 设置未注册字体导致回退

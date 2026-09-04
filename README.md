@@ -69,7 +69,8 @@ pip install "wei-data-shu[database]"
 # 文本分析 / 词云 / 趋势预测 / 数据分析（依赖: jieba, numpy, matplotlib, statsmodels, wordcloud, pandas, openpyxl）
 pip install "wei-data-shu[analysis]"
 
-# 需要通过本机 Excel 应用操作工作簿（依赖: xlwings + Microsoft Excel）
+# 需要通过本机 Excel 应用操作工作簿、启用/禁用宏或运行宏
+# 依赖: xlwings + Microsoft Excel
 pip install "wei-data-shu[excel-client]"
 ```
 
@@ -93,6 +94,34 @@ from wei_data_shu.analysis import DataCleaner, read_csv, plot_line, plot_corr_he
 from wei_data_shu.ai import ChatBot
 from wei_data_shu.utils import fn_timer, generate_password, search_colors
 ```
+
+### Excel 宏操作
+
+`.xlsm` 和 `.xltm` 文件通过 `ExcelManager` 读写时会自动保留 VBA 内容。运行宏或控制宏安全级别需要 Windows 本机安装 Microsoft Excel，并安装 `excel-client` 可选依赖：
+
+```bash
+pip install "wei-data-shu[excel-client]"
+```
+
+```python
+from wei_data_shu.excel import OpenExcel
+
+# 启用宏打开，执行操作后自动保存
+with OpenExcel("report.xlsm").open_with_macros_enabled() as workbook:
+    workbook.api.RefreshAll()
+
+# 禁用宏打开不受信任的工作簿
+with OpenExcel("untrusted.xlsm").open_with_macros_disabled() as workbook:
+    print(workbook.name)
+
+# 调用指定 VBA 宏，可传递参数并保存到新文件
+result = OpenExcel("report.xlsm", "report-result.xlsm").run_macro(
+    "Module1.RefreshReport",
+    args=["2026-09"],
+)
+```
+
+也可以直接使用 `open_save_Excel(macro_security="enable|disable|default")` 控制当前 Excel 会话的宏安全级别。该设置不会修改 Excel 的全局安全配置。
 
 ### 命令行工具
 
@@ -184,7 +213,7 @@ print("临时密码：", temp_password)
 | 领域 | 导入路径 | 主要 API | 功能 |
 | --- | --- | --- | --- |
 | 数据库 | `wei_data_shu.database` | `MySQLDatabase`, `MySQLDatabaseError` | MySQL 连接、查询、插入、更新、删除、存储过程 |
-| Excel | `wei_data_shu.excel` | `ExcelManager`, `OpenExcel`, `ExcelOperation`, `quick_excel`, `ExcelHandler` | 读写工作簿、样式、DataFrame、工作表管理、拆分合并、Excel App 操作 |
+| Excel | `wei_data_shu.excel` | `ExcelManager`, `OpenExcel`, `ExcelOperation`, `quick_excel`, `ExcelHandler` | 读写工作簿、样式、DataFrame、工作表管理、拆分合并、宏启用/禁用与调用 |
 | 文件 | `wei_data_shu.files` | `FileManagement` | 查找最新文件夹、复制文件、批量重命名、删除 |
 | 邮件 | `wei_data_shu.mail` | `DailyEmailReport` | SMTP/SSL 发送纯文本/HTML 邮件、附件 |
 | 文本 | `wei_data_shu.text` | `DateFormat`, `StringBaba`, `TextAnalysis`, `TrendPredictor`, `MultipleTrendPredictor`, `textCombing` | 日期格式化、字符串清洗、词频分析、词云、ARIMA 趋势预测、段落重组 |
@@ -291,11 +320,11 @@ print(search_colors("薄荷")[0])                        # 颜色检索
 
 ## 🚢 发布
 
-打 `wei-data-shu-<版本>` 格式的 tag（如 `wei-data-shu-0.7.1`）并推送，CI 会自动构建并发布到 PyPI：
+打 `wei-data-shu-<版本>` 格式的 tag（如 `wei-data-shu-0.7.2`）并推送，CI 会自动构建并发布到 PyPI：
 
 ```bash
-git tag wei-data-shu-0.7.1
-git push origin wei-data-shu-0.7.1
+git tag wei-data-shu-0.7.2
+git push origin wei-data-shu-0.7.2
 ```
 
 > 前提：仓库需配置 `PYPI_TOKEN` secret（见 [release.yml](.github/workflows/release.yml)）。

@@ -12,18 +12,22 @@ from openpyxl.worksheet.worksheet import Worksheet
 from ._helpers import _apply_styles, _auto_range, create_workbook
 
 
+_MACRO_ENABLED_SUFFIXES = {".xlsm", ".xltm"}
+
+
 class ExcelManager:
     def __init__(self, file_path: Union[str, Path, None], default_sheet: str = "sheet1"):
         if file_path is None:
             raise ValueError("file_path 不能为 None")
         self.file_path = Path(file_path)
+        self._keep_vba = self.file_path.suffix.lower() in _MACRO_ENABLED_SUFFIXES
         self._workbook: Optional[Workbook] = None
         if not self.file_path.parent.exists():
             raise FileNotFoundError(f"目录不存在: {self.file_path.parent}")
         try:
             if not self.file_path.exists():
                 create_workbook(str(self.file_path), default_sheet)
-            self._workbook = load_workbook(str(self.file_path))
+            self._workbook = load_workbook(str(self.file_path), keep_vba=self._keep_vba)
         except Exception as exc:
             raise IOError(f"加载工作簿失败: {exc}") from exc
 
@@ -44,6 +48,12 @@ class ExcelManager:
     @property
     def sheet_names(self) -> List[str]:
         return self.workbook.sheetnames
+
+    @property
+    def macro_enabled(self) -> bool:
+        """Whether VBA content is preserved when this workbook is saved."""
+
+        return self._keep_vba
 
     def _ensure_sheet(self, sheet_name: str) -> Worksheet:
         if sheet_name not in self.workbook.sheetnames:
@@ -193,8 +203,11 @@ class ExcelManager:
 
     def save(self, file_path: Optional[Union[str, Path]] = None) -> None:
         save_path = file_path or self.file_path
+        save_path = Path(save_path)
+        if self._keep_vba and save_path.suffix.lower() not in _MACRO_ENABLED_SUFFIXES:
+            raise ValueError("含 VBA 的工作簿必须保存为 .xlsm 或 .xltm，避免宏被移除")
         try:
-            Path(save_path).parent.mkdir(parents=True, exist_ok=True)
+            save_path.parent.mkdir(parents=True, exist_ok=True)
             self.workbook.save(save_path)
         except Exception as exc:
             raise IOError(f"保存工作簿失败: {exc}") from exc

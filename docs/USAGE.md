@@ -338,10 +338,25 @@ with OpenExcel("data.xlsx").my_open() as wb:
 with OpenExcel("report.xlsx").open_save_Excel() as appwb:
     appwb.api.RefreshAll()
 
-# 方式三：列出工作簿中的工作表
+# 方式三：启用或禁用宏（仅对本次 Excel 会话生效）
+with OpenExcel("report.xlsm").open_with_macros_enabled() as appwb:
+    appwb.api.RefreshAll()
+
+with OpenExcel("untrusted.xlsm").open_with_macros_disabled() as appwb:
+    print(appwb.name)
+
+# 方式四：直接运行宏并保存到目标文件
+result = OpenExcel("report.xlsm", "report_result.xlsm").run_macro(
+    "Module1.RefreshReport",
+    args=["2026-09"],
+)
+
+# 方式五：列出工作簿中的工作表
 sheets = OpenExcel("data.xlsx").file_show(filter=["sheet", "报表"])
 print(sheets)
 ```
+
+`run_macro()` 需要安装 Microsoft Excel 和 `xlwings`，并默认在本次会话中启用宏。`macro_security="default"` 使用 Excel 当前界面设置，`macro_security="disable"` 强制禁用宏。宏安全级别不会写入系统设置。
 
 ### 3.7 完整流水线示例
 
