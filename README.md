@@ -320,11 +320,11 @@ print(search_colors("薄荷")[0])                        # 颜色检索
 
 ## 🚢 发布
 
-打 `wei-data-shu-<版本>` 格式的 tag（如 `wei-data-shu-0.7.2`）并推送，CI 会自动构建并发布到 PyPI：
+打 `wei-data-shu-<版本>` 格式的 tag（如 `wei-data-shu-0.7.3`）并推送，CI 会自动构建并发布到 PyPI：
 
 ```bash
-git tag wei-data-shu-0.7.2
-git push origin wei-data-shu-0.7.2
+git tag wei-data-shu-0.7.3
+git push origin wei-data-shu-0.7.3
 ```
 
 > 前提：仓库需配置 `PYPI_TOKEN` secret（见 [release.yml](.github/workflows/release.yml)）。

@@ -41,7 +41,13 @@ class MySQLDatabase:
     def connect(self) -> None:
         """Establish the connection. Raises :class:`MySQLDatabaseError` on failure."""
         try:
-            self.connection = mysql.connector.connect(**self.config)
+            config = dict(self.config)
+            # The connector's C extension can crash the process on Windows
+            # with newer Python versions. Use the safer pure-Python
+            # implementation by default while allowing callers to opt in to
+            # the C extension explicitly with ``use_pure=False``.
+            config.setdefault("use_pure", True)
+            self.connection = mysql.connector.connect(**config)
         except MySQLConnectorError as err:
             self.connection = None
             raise MySQLDatabaseError(f"连接 MySQL 失败: {err}") from err

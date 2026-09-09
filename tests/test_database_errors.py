@@ -27,6 +27,30 @@ class _FakeConfig:
 
 
 class TestMySQLDatabaseErrors(unittest.TestCase):
+    def test_connect_defaults_to_pure_connector_without_mutating_config(self):
+        fake = MagicMock()
+        config = {"host": "localhost"}
+
+        with patch("wei_data_shu.database.mysql.mysql.connector", fake):
+            db = MySQLDatabase.__new__(MySQLDatabase)
+            db.config = config
+            db.connection = None
+            db.connect()
+
+        fake.connect.assert_called_once_with(host="localhost", use_pure=True)
+        self.assertEqual(config, {"host": "localhost"})
+
+    def test_connect_respects_explicit_use_pure(self):
+        fake = MagicMock()
+
+        with patch("wei_data_shu.database.mysql.mysql.connector", fake):
+            db = MySQLDatabase.__new__(MySQLDatabase)
+            db.config = {"host": "localhost", "use_pure": False}
+            db.connection = None
+            db.connect()
+
+        fake.connect.assert_called_once_with(host="localhost", use_pure=False)
+
     def test_connect_failure_raises_error(self):
         fake = MagicMock()
         fake.connect.side_effect = Exception("connection refused")

@@ -9,6 +9,12 @@ The format is based on Keep a Changelog and the project follows Semantic Version
 
 ## [Unreleased]
 
+## [0.7.3] - 2026-09-09
+
+### Fixed
+
+- MySQL 连接默认使用 `use_pure=True`，规避 Windows + Python 3.14 环境下 `mysql-connector-python` C Extension 可能触发原生访问冲突；调用方仍可显式设置 `use_pure=False`
+
 ## [0.7.2] - 2026-09-04
 
 ### Added
